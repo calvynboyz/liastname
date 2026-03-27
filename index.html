@@ -14,7 +14,7 @@
         :root {
             --primary: #f3d48b;
             --bg-dark: #050505;
-            --card-bg: rgba(15, 15, 15, 0.8);
+            --card-bg: rgba(15, 15, 15, 0.85);
             --border-color: rgba(255, 255, 255, 0.08);
             --online-green: #00ff88;
             --danger: #ff0000;
@@ -46,85 +46,61 @@
             background: rgba(0,0,0,0.85); align-items: center; position: sticky; 
             top: 0; z-index: 100; backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color);
         }
-        #brand-name { font-weight: bold; letter-spacing: 3px; font-family: 'Orbitron'; transition: var(--transition); }
+        #brand-name { font-weight: bold; letter-spacing: 3px; font-family: 'Orbitron'; }
         nav button { background: none; border: none; color: #555; cursor: pointer; font-size: 0.8rem; transition: var(--transition); font-family: 'Orbitron'; }
         nav button.active { color: #fff; text-shadow: 0 0 15px var(--primary); }
 
-        /* --- Admin Panel (พับได้) --- */
+        /* --- Admin Wrapper (Smooth Toggle) --- */
         #adminWrapper {
-            background: var(--admin-box-bg); border: 1px solid var(--primary); 
+            background: rgba(20, 10, 10, 0.95); border: 1px solid var(--primary); 
             border-radius: 20px; margin-bottom: 40px; overflow: hidden;
-            transition: var(--transition); max-height: 1000px;
-            backdrop-filter: blur(15px);
+            transition: var(--transition); max-height: 2000px;
+            backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        #adminWrapper.collapsed { max-height: 60px; border-color: #222; }
+        #adminWrapper.collapsed { max-height: 55px; border-color: #222; }
         .admin-header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 25px; cursor: pointer; background: rgba(243, 212, 139, 0.05);
         }
-        .admin-content { padding: 25px; transition: var(--transition); }
+        .admin-content { padding: 30px; transition: var(--transition); }
+        .admin-sub-title { font-family: 'Orbitron'; font-size: 0.75rem; color: var(--primary); margin-bottom: 20px; display: block; border-left: 3px solid var(--primary); padding-left: 10px; letter-spacing: 2px;}
+
         .admin-form input, .admin-form select { 
-            background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; 
-            padding: 12px; border-radius: 8px; outline: none; transition: 0.3s;
+            background: rgba(0,0,0,0.7); border: 1px solid #333; color: #fff; 
+            padding: 12px; border-radius: 8px; outline: none; transition: 0.3s; width: 100%; box-sizing: border-box;
         }
         .admin-form input:focus { border-color: var(--primary); background: #000; }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .btn-action { background: var(--primary); color: #000; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; font-size: 0.7rem; transition: 0.3s; }
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(243, 212, 139, 0.3); }
 
         /* --- Roster UI --- */
-        .section-title { 
-            font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 5px; color: #444; 
-            margin: 60px 0 25px; display: flex; align-items: center; gap: 20px;
-        }
+        .section-title { font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 5px; color: #444; margin: 60px 0 25px; display: flex; align-items: center; gap: 20px; }
         .section-title::after { content: ""; height: 1px; flex-grow: 1; background: linear-gradient(to right, #222, transparent); }
-
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
 
         .member-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
             padding: 20px; display: flex; align-items: center; gap: 20px;
-            border-radius: 5px; position: relative; backdrop-filter: blur(10px); 
+            border-radius: 8px; position: relative; backdrop-filter: blur(10px); 
             transition: var(--transition); opacity: 0; transform: translateY(20px);
         }
         .member-card.show { opacity: 1; transform: translateY(0); }
-        .member-card:hover { 
-            border-color: var(--primary); background: rgba(30, 30, 30, 0.9); 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 20px rgba(243, 212, 139, 0.1);
-            transform: translateY(-5px);
-        }
+        .member-card:hover { border-color: var(--primary); background: rgba(30, 30, 30, 0.9); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.8);}
 
-        .avatar-box { 
-            width: 75px; height: 75px; background-size: cover; background-position: center; 
-            border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition);
-        }
-        .member-card:hover .avatar-box { border-color: var(--primary); transform: scale(1.05); }
-
-        .status-pulse {
-            position: absolute; bottom: 18px; left: 82px; width: 10px; height: 10px;
-            background: var(--online-green); border-radius: 50%; box-shadow: 0 0 10px var(--online-green);
-        }
-
+        .avatar-box { width: 75px; height: 75px; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+        .status-pulse { position: absolute; bottom: 18px; left: 82px; width: 10px; height: 10px; background: var(--online-green); border-radius: 50%; box-shadow: 0 0 10px var(--online-green); }
         .name { font-family: 'Orbitron'; font-size: 1.1rem; margin: 0; color: #eee; letter-spacing: 1px; }
         .fb-link { font-size: 0.7rem; color: #555; text-decoration: none; margin-top: 8px; display: inline-block; transition: 0.3s; font-family: 'Orbitron'; }
-        .fb-link:hover { color: var(--primary); letter-spacing: 1px; }
-
-        .delete-btn { position: absolute; top: 15px; right: 15px; color: var(--danger); cursor: pointer; background: none; border: none; opacity: 0.2; transition: 0.3s; }
+        .fb-link:hover { color: var(--primary); }
+        .delete-btn { position: absolute; top: 15px; right: 15px; color: var(--danger); cursor: pointer; background: none; border: none; opacity: 0.3; transition: 0.3s; }
         .member-card:hover .delete-btn { opacity: 1; }
 
-        /* --- Music Player --- */
+        /* --- Music Player UI --- */
         .bottom-ui { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
-        .music-mini-player { 
-            display: flex; align-items: center; background: rgba(15, 15, 15, 0.95); 
-            border: 1px solid var(--border-color); padding: 8px; width: 260px; 
-            cursor: pointer; backdrop-filter: blur(15px); border-radius: 12px; transition: var(--transition);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        .music-mini-player { display: flex; align-items: center; background: rgba(15, 15, 15, 0.95); border: 1px solid var(--border-color); padding: 8px; width: 260px; cursor: pointer; backdrop-filter: blur(15px); border-radius: 12px; transition: var(--transition); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .music-mini-player:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .full-player { 
-            position: fixed; bottom: 30px; right: 30px; width: 320px; 
-            background: rgba(5, 5, 5, 0.98); border: 1px solid var(--border-color);
-            padding: 25px; display: none; flex-direction: column; border-radius: 24px;
-            backdrop-filter: blur(30px); box-shadow: 0 30px 80px rgba(0,0,0,1);
-            animation: slideIn 0.5s ease;
-        }
+        .full-player { position: fixed; bottom: 30px; right: 30px; width: 320px; background: rgba(5, 5, 5, 0.98); border: 1px solid var(--border-color); padding: 25px; display: none; flex-direction: column; border-radius: 24px; backdrop-filter: blur(30px); box-shadow: 0 30px 80px rgba(0,0,0,1); animation: slideIn 0.5s ease; }
         @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .hidden { display: none !important; }
@@ -150,7 +126,7 @@
                 <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 35px; letter-spacing: 5px;">ACCESS GATE</h2>
                 <input type="text" id="loginUser" placeholder="OPERATOR ID" style="width:100%; background:#000; border:1px solid #333; padding:15px; margin-bottom:15px; color:#fff; border-radius:12px; outline:none; text-align:center; font-family:'Orbitron';">
                 <input type="password" id="loginPass" placeholder="PASSKEY" style="width:100%; background:#000; border:1px solid #333; padding:15px; margin-bottom:30px; color:#fff; border-radius:12px; outline:none; text-align:center; font-family:'Orbitron';">
-                <button onclick="handleLogin()" style="width:100%; background:var(--primary); padding:18px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-family:'Orbitron'; letter-spacing:2px; transition:0.3s;">INITIALIZE</button>
+                <button onclick="handleLogin()" style="width:100%; background:var(--primary); padding:18px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-family:'Orbitron'; letter-spacing:2px;">INITIALIZE</button>
             </div>
         </section>
 
@@ -159,36 +135,46 @@
                 <div id="adminWrapper">
                     <div class="admin-header" onclick="toggleAdminPanel()">
                         <span style="color: var(--primary); font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 2px;">
-                            <i class="fas fa-tools mr-2"></i> SYSTEM DASHBOARD
+                            <i class="fas fa-shield-alt mr-2"></i> COMMAND CENTER
                         </span>
                         <span id="collapseIcon" style="color: #444; font-family: 'Orbitron'; font-size: 0.7rem;">[ - ] HIDE PANEL</span>
                     </div>
-                    <div class="admin-content">
-                        <div style="border-bottom: 1px solid #222; padding-bottom: 25px; margin-bottom: 25px;">
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
-                                <input type="text" id="editBrand" placeholder="Brand Name">
-                                <select id="editFont">
-                                    <option value="'Orbitron'">Font: Orbitron</option>
-                                    <option value="'Kanit'">Font: Kanit</option>
-                                    <option value="'Rajdhani'">Font: Rajdhani</option>
-                                </select>
-                                <input type="text" id="editBG" placeholder="Background Image URL">
-                                <input type="text" id="editMusic" placeholder="YouTube Video ID">
-                            </div>
-                            <button onclick="updateSettings()" style="width: 100%; background: #222; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.7rem; transition: 0.3s;">SAVE SYSTEM CONFIG</button>
+                    <div class="admin-content admin-form">
+                        <span class="admin-sub-title">SYSTEM CONFIGURATION</span>
+                        <div class="admin-grid">
+                            <input type="text" id="editBrand" placeholder="Web Title">
+                            <select id="editFont">
+                                <option value="'Orbitron'">Font: Orbitron</option>
+                                <option value="'Kanit'">Font: Kanit</option>
+                                <option value="'Rajdhani'">Font: Rajdhani</option>
+                            </select>
+                            <input type="text" id="editBG" placeholder="Background URL">
                         </div>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;" id="memberForm">
+                        
+                        <span class="admin-sub-title">MUSIC MANAGER</span>
+                        <div class="admin-grid">
+                            <input type="text" id="editMusicTitle" placeholder="Song Title">
+                            <input type="text" id="editMusicArtist" placeholder="Artist Name">
+                            <input type="text" id="editMusicImg" placeholder="Music Cover Image URL">
+                            <input type="text" id="editMusicId" placeholder="YouTube Video ID">
+                        </div>
+                        <button class="btn-action" onclick="updateSettings()" style="width:100%; margin-bottom: 35px; background: #222; color: #fff;">SYNC SYSTEM & MUSIC</button>
+
+                        <span class="admin-sub-title">OPERATIVE REGISTRATION</span>
+                        <div class="admin-grid">
                             <input type="hidden" id="editMemberId">
-                            <input type="text" id="newName" placeholder="Operative Name" style="flex: 1.5;">
-                            <input type="text" id="newImg" placeholder="Avatar Image Link" style="flex: 1.5;">
-                            <input type="text" id="newFB" placeholder="Facebook Profile Link" style="flex: 1.5;">
-                            <select id="newRole" style="flex: 1;">
+                            <input type="text" id="newName" placeholder="Member Name">
+                            <input type="text" id="newImg" placeholder="Profile Image Link">
+                            <input type="text" id="newFB" placeholder="Facebook Profile Link">
+                            <select id="newRole">
                                 <option value="founder">Founder</option>
                                 <option value="leader">Leader</option>
                                 <option value="member" selected>Member</option>
                             </select>
-                            <button onclick="saveToDB()" id="addBtn" style="background: var(--primary); border: none; padding: 0 35px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; font-size: 0.7rem;">ADD</button>
-                            <button onclick="resetMemberForm()" id="cancelEditBtn" class="hidden" style="background: #333; color: #fff; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer;">CANCEL</button>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="saveToDB()" id="addBtn" class="btn-action" style="flex:1;">ADD OPERATIVE</button>
+                            <button onclick="resetMemberForm()" id="cancelEditBtn" class="hidden" style="background: #333; color: #fff; border: none; padding: 0 25px; border-radius: 8px; cursor: pointer; font-family:'Orbitron'; font-size:0.7rem;">CANCEL</button>
                         </div>
                     </div>
                 </div>
@@ -209,27 +195,27 @@
         <div class="music-mini-player" id="miniPlayer" onclick="togglePlayer()">
             <img src="" class="mini-art" id="miniArt" style="width:45px; height:45px; border-radius:5px; object-fit:cover;">
             <div style="flex:1; padding-left:15px; overflow:hidden;">
-                <span id="displayTitle" style="font-family:'Orbitron'; font-size:0.6rem; color:#fff; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">STARBOY</span>
-                <span style="font-size:0.5rem; color:#666;">ACTIVE AUDIO</span>
+                <span id="displayMiniTitle" style="font-family:'Orbitron'; font-size:0.6rem; color:#fff; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">STARBOY</span>
+                <span id="displayMiniArtist" style="font-size:0.5rem; color:#666;">THE WEEKND</span>
             </div>
             <i class="fa-solid fa-chevron-up" style="color:#444; font-size: 0.7rem; margin: 0 10px;"></i>
         </div>
 
         <div class="full-player" id="fullPlayer">
-            <div style="display:flex; justify-content:space-between; font-size:0.6rem; color:#444; margin-bottom:20px; font-family:'Orbitron'; letter-spacing:1px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.6rem; color:#444; margin-bottom:20px; font-family:'Orbitron';">
                 <span onclick="togglePlayer()" style="cursor:pointer;"><i class="fas fa-chevron-down"></i> DISMISS</span>
                 <span style="color:var(--danger);"><i class="fas fa-circle" style="font-size:4px; vertical-align:middle;"></i> LIVE SYNC</span>
             </div>
             <img src="" id="fullArt" style="width:100%; border-radius:15px; margin-bottom:25px; box-shadow: 0 15px 40px rgba(0,0,0,0.5);">
             <div style="text-align:center; margin-bottom:25px;">
                 <h2 id="fullTitle" style="font-family:'Orbitron'; font-size:1rem; margin:0; letter-spacing:2px;">STARBOY</h2>
-                <p style="font-size:0.6rem; color:#666; margin:8px 0 0 0; letter-spacing:3px;">THE WEEKND FT. DAFT PUNK</p>
+                <p id="fullArtist" style="font-size:0.6rem; color:#666; margin:8px 0 0 0; letter-spacing:3px;">THE WEEKND FT. DAFT PUNK</p>
             </div>
             <div style="width:100%; height:3px; background:#1a1a1a; margin-bottom:25px; cursor:pointer; border-radius:10px;" onclick="seek(event)">
-                <div id="progressLine" style="height:100%; background:var(--danger); width:0%; border-radius:10px; transition: width 0.3s linear;"></div>
+                <div id="progressLine" style="height:100%; background:var(--danger); width:0%; border-radius:10px;"></div>
             </div>
             <div style="display:flex; justify-content:center; margin-bottom:25px;">
-                <button onclick="togglePlay()" style="background:#fff; color:#000; width:60px; height:60px; border-radius:50%; border:none; cursor:pointer; transition:0.3s; box-shadow: 0 0 20px rgba(255,255,255,0.1);"><i class="fa-solid fa-play" id="playIcon" style="font-size:1.2rem;"></i></button>
+                <button onclick="togglePlay()" style="background:#fff; color:#000; width:60px; height:60px; border-radius:50%; border:none; cursor:pointer;"><i class="fa-solid fa-play" id="playIcon"></i></button>
             </div>
             <div style="display:flex; align-items:center; gap:12px;">
                 <i class="fa-solid fa-volume-low" style="color:#333; font-size:0.8rem;"></i>
@@ -254,7 +240,6 @@
             setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 600); }, 3000);
         }
 
-        // --- Admin UI Functions ---
         function toggleAdminPanel() {
             const wrapper = document.getElementById('adminWrapper');
             const icon = document.getElementById('collapseIcon');
@@ -267,8 +252,9 @@
         document.head.append(tag);
 
         function onYouTubeIframeAPIReady() {
-            db.ref('settings/musicUrl').once('value', s => {
-                const vidId = s.val() || 'XXYlFuWEuKI';
+            db.ref('settings').once('value', s => {
+                const config = s.val() || {};
+                const vidId = config.musicUrl || 'XXYlFuWEuKI';
                 player = new YT.Player('yt-player', {
                     videoId: vidId, playerVars: { 'autoplay': 1, 'playlist': vidId, 'controls': 0 },
                     events: {
@@ -290,6 +276,7 @@
         function togglePlay() { isPlaying ? player.pauseVideo() : player.playVideo(); }
         function changeVolume(v) { if(player) player.setVolume(v); }
         function seek(e) { player.seekTo(player.getDuration() * (e.offsetX / e.currentTarget.offsetWidth)); }
+        
         function updateProgress() {
             setInterval(() => {
                 if (player && player.getCurrentTime) {
@@ -299,19 +286,30 @@
             }, 500);
         }
 
-        // --- Database Sync ---
+        // --- Firebase Sync ---
         db.ref('settings').on('value', (snapshot) => {
             const s = snapshot.val() || {};
+            // Web Config
             document.getElementById('brand-name').innerText = s.brandName || "CALVYN";
             document.getElementById('brand-name').style.fontFamily = s.fontFamily || "'Orbitron'";
             document.body.style.backgroundImage = s.bgUrl ? `url('${s.bgUrl}')` : "url('https://img1.pic.in.th/images/calvyn.png')";
             
+            // Music UI Update
+            const musicTitle = s.musicTitle || "STARBOY";
+            const musicArtist = s.musicArtist || "THE WEEKND";
+            const musicImg = s.musicImg || `https://i.ytimg.com/vi/${s.musicUrl || 'XXYlFuWEuKI'}/maxresdefault.jpg`;
+
+            document.getElementById('displayMiniTitle').innerText = musicTitle;
+            document.getElementById('displayMiniArtist').innerText = musicArtist;
+            document.getElementById('miniArt').src = musicImg;
+            document.getElementById('fullArt').src = musicImg;
+            document.getElementById('fullTitle').innerText = musicTitle;
+            document.getElementById('fullArtist').innerText = musicArtist;
+
+            // Player Logic
             if(s.musicUrl && player && player.loadVideoById) {
                 if(player.getVideoData().video_id !== s.musicUrl) {
                     player.loadVideoById(s.musicUrl);
-                    const img = `https://i.ytimg.com/vi/${s.musicUrl}/maxresdefault.jpg`;
-                    document.getElementById('miniArt').src = img;
-                    document.getElementById('fullArt').src = img;
                 }
             }
         });
@@ -345,53 +343,47 @@
             });
         });
 
-        // --- Form Logic ---
+        // --- Admin Handlers ---
+        function updateSettings() {
+            db.ref('settings').update({
+                brandName: document.getElementById('editBrand').value || "CALVYN",
+                fontFamily: document.getElementById('editFont').value,
+                bgUrl: document.getElementById('editBG').value,
+                musicUrl: document.getElementById('editMusicId').value || "XXYlFuWEuKI",
+                musicTitle: document.getElementById('editMusicTitle').value || "STARBOY",
+                musicArtist: document.getElementById('editMusicArtist').value || "THE WEEKND",
+                musicImg: document.getElementById('editMusicImg').value
+            });
+            showToast("SYSTEM & MUSIC RE-CONFIGURED");
+        }
+
         function prepareEditMember(id, data) {
             document.getElementById('editMemberId').value = id;
             document.getElementById('newName').value = data.name;
             document.getElementById('newImg').value = data.img;
             document.getElementById('newFB').value = data.fb;
             document.getElementById('newRole').value = data.role;
-            document.getElementById('addBtn').innerText = "UPDATE";
+            document.getElementById('addBtn').innerText = "UPDATE OPERATIVE";
             document.getElementById('cancelEditBtn').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            showToast("EDIT MODE ACTIVE");
+            showToast("EDIT MODE: " + data.name.toUpperCase());
         }
 
         function resetMemberForm() {
             document.getElementById('editMemberId').value = "";
             ['newName','newImg','newFB'].forEach(id => document.getElementById(id).value = "");
-            document.getElementById('newRole').value = "member";
-            document.getElementById('addBtn').innerText = "ADD";
+            document.getElementById('addBtn').innerText = "ADD OPERATIVE";
             document.getElementById('cancelEditBtn').classList.add('hidden');
-        }
-
-        function updateSettings() {
-            db.ref('settings').update({
-                brandName: document.getElementById('editBrand').value || "CALVYN",
-                fontFamily: document.getElementById('editFont').value,
-                bgUrl: document.getElementById('editBG').value,
-                musicUrl: document.getElementById('editMusic').value
-            });
-            showToast("SYSTEM CONFIG SYNCED");
         }
 
         function saveToDB() {
             const id = document.getElementById('editMemberId').value;
             const name = document.getElementById('newName').value;
-            const data = {
-                name, img: document.getElementById('newImg').value,
-                fb: document.getElementById('newFB').value,
-                role: document.getElementById('newRole').value
-            };
+            const data = { name, img: document.getElementById('newImg').value, fb: document.getElementById('newFB').value, role: document.getElementById('newRole').value };
             if (name) {
-                if(id) {
-                    db.ref('roster/' + id).update(data);
-                    showToast("OPERATIVE UPDATED");
-                } else {
-                    db.ref('roster').push(data);
-                    showToast("OPERATIVE REGISTERED");
-                }
+                if(id) db.ref('roster/' + id).update(data);
+                else db.ref('roster').push(data);
+                showToast(id ? "OPERATIVE UPDATED" : "OPERATIVE REGISTERED");
                 resetMemberForm();
             }
         }
@@ -409,7 +401,7 @@
                 document.getElementById('adminPanel').classList.remove('hidden');
                 showView('memberView');
                 showToast("ACCESS GRANTED");
-            } else { showToast("UNAUTHORIZED"); }
+            } else { showToast("UNAUTHORIZED ACCESS"); }
         }
 
         function deleteItem(id) { if (confirm("TERMINATE OPERATIVE?")) db.ref('roster/' + id).remove(); }
