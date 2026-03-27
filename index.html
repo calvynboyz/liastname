@@ -3,222 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member List - DERECK168</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>JQLUES - Elite Roster (Cloud Sync)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Kanit:wght@200;400&display=swap" rel="stylesheet">
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
+        :root {
+            --primary: #f7a322;
+            --secondary: #e74c3c;
+            --bg-dark: #050505;
+            --card-bg: rgba(15, 15, 15, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-glow: rgba(247, 163, 34, 0.2);
+            --online-green: #00ff88;
+        }
+
         body {
-            background: linear-gradient(to bottom, #2b0a0a, #121212);
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Rajdhani', 'Kanit', sans-serif;
+            margin: 0; padding: 0;
             min-height: 100vh;
-            color: white;
-            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
+
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(247, 163, 34, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(247, 163, 34, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px; z-index: -1;
+            mask-image: radial-gradient(circle at center, black, transparent 80%);
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        /* --- Header --- */
+        .main-header { text-align: center; margin-bottom: 60px; }
+        .main-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: clamp(2rem, 8vw, 4.5rem);
+            margin: 0; letter-spacing: 15px;
+            background: linear-gradient(to bottom, #fff 40%, #555 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        /* --- Search & Admin Button --- */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; gap: 10px; }
+        .search-box { position: relative; width: 300px; }
+        .search-box input {
+            width: 100%; background: rgba(255,255,255,0.03); border: none;
+            border-bottom: 2px solid var(--border-color); padding: 10px 40px 10px 10px;
+            color: #fff; outline: none; transition: 0.3s;
+        }
+        .search-box input:focus { border-bottom-color: var(--primary); }
+        .btn-admin-access { background: none; border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.7rem; }
+
+        /* --- Grid & Cards --- */
+        .section-title { font-family: 'Orbitron'; font-size: 0.9rem; letter-spacing: 4px; color: #555; margin: 40px 0 20px; display: flex; align-items: center; gap: 15px; }
+        .section-title::after { content: ""; height: 1px; flex-grow: 1; background: linear-gradient(to right, #222, transparent); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
         .member-card {
-            background-color: rgba(45, 20, 20, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-            position: relative;
+            background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px;
+            display: flex; align-items: center; gap: 15px; position: relative; backdrop-filter: blur(10px);
         }
-        .member-card:hover {
-            transform: translateY(-5px);
-            background-color: rgba(70, 25, 25, 0.9);
-        }
-        .admin-box { background-color: #1a0d0d; border-radius: 1rem; box-shadow: 0 0 30px rgba(0,0,0,0.7); }
-        .login-btn { background-color: #f3d48b; color: #1a0d0d; font-weight: bold; }
-        .hidden { display: none; }
-        .delete-btn {
-            position: absolute; top: 10px; right: 10px; background: #dc2626; color: white;
-            width: 25px; height: 25px; border-radius: 50%; font-size: 12px;
-            display: none; align-items: center; justify-content: center;
-        }
-        .admin-mode .delete-btn { display: flex; }
+        .avatar-box { width: 60px; height: 60px; border-radius: 4px; background-size: cover; background-position: center; border: 1px solid var(--border-color); }
+        .info { flex-grow: 1; }
+        .name { font-family: 'Orbitron'; font-size: 1rem; margin: 0; color: #eee; }
+        .role-tag { font-size: 0.6rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .social-btn { font-size: 0.7rem; color: var(--primary); text-decoration: none; margin-top: 5px; display: inline-block; }
+
+        /* --- Admin Dashboard --- */
+        #adminPanel { background: #111; border: 1px solid var(--primary); padding: 20px; margin-bottom: 40px; display: none; }
+        .admin-form { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; }
+        .admin-form input, .admin-form select { background: #000; border: 1px solid #333; color: #fff; padding: 8px; outline: none; }
+        .btn-add { background: var(--primary); color: #000; border: none; padding: 8px 20px; font-weight: bold; cursor: pointer; }
+        .delete-btn { color: var(--secondary); cursor: pointer; font-size: 0.8rem; margin-left: auto; border: none; background: none; }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <nav class="flex justify-between items-center px-10 py-5 sticky top-0 z-50 bg-[#2b0a0a]/80 backdrop-blur-md">
-        <div class="text-2xl font-bold tracking-widest cursor-pointer" onclick="showView('memberView')">DERECK168</div>
-        <div class="space-x-6 text-sm flex items-center">
-            <button onclick="showView('memberView')" id="navMembers" class="text-gray-300 border-b-2 border-red-600 pb-1">Members</button>
-            <button onclick="checkAdminStatus()" id="navAdmin" class="text-gray-400 hover:text-white transition">Admin</button>
-            <button id="logoutBtn" onclick="logout()" class="hidden text-red-500 text-xs ml-4"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </div>
-    </nav>
+    <div class="bg-grid"></div>
 
-    <section id="memberView">
-        <header class="text-center mt-10 mb-16 relative">
-            <h2 class="text-5xl md:text-7xl font-black text-white/5 absolute left-1/2 -translate-x-1/2 -mt-8 tracking-[1rem] uppercase select-none">Memberlist</h2>
-            <h1 class="text-4xl font-bold relative z-10 tracking-widest uppercase">Dereck</h1>
-            <div class="mt-10 max-w-md mx-auto px-4 relative">
-                <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search code name..." 
-                    class="w-full bg-black/40 border border-gray-700 rounded-full py-2.5 pl-10 pr-4 outline-none focus:border-red-600 transition text-sm">
-            </div>
+    <div class="container">
+        <header class="main-header">
+            <h1>JQLUES</h1>
+            <div style="color: var(--primary); font-size: 0.8rem; letter-spacing: 5px;">ELITE ROSTER SYNC</div>
         </header>
-        <main id="memberGrid" class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></main>
-        <footer id="pagination" class="flex justify-center items-center space-x-2 my-12"></footer>
-    </section>
 
-    <section id="adminLoginView" class="hidden animate-fadeIn flex flex-col items-center mt-20 px-4">
-        <div class="admin-box w-full max-w-sm p-10">
-            <h2 class="text-[#f3d48b] text-center mb-8 font-bold tracking-widest uppercase border-b border-gray-700 pb-4">Admin Login</h2>
-            <div class="space-y-6">
-                <input type="text" id="adminEmail" placeholder="Username" class="w-full bg-black border border-gray-800 rounded py-2 px-3 outline-none focus:border-[#f3d48b] text-sm">
-                <input type="password" id="adminPass" placeholder="Password" class="w-full bg-black border border-gray-800 rounded py-2 px-3 outline-none focus:border-[#f3d48b] text-sm">
-                <button onclick="handleLogin()" class="login-btn w-full py-2.5 rounded text-sm uppercase">Login</button>
+        <div id="adminPanel">
+            <h3 style="font-family: 'Orbitron'; font-size: 0.8rem; margin-top: 0;">ADMIN DASHBOARD</h3>
+            <div class="admin-form">
+                <input type="text" id="newName" placeholder="MEMBER NAME">
+                <input type="text" id="newFB" placeholder="FACEBOOK LINK">
+                <select id="newRole">
+                    <option value="founder">Founder</option>
+                    <option value="leader">Leader</option>
+                    <option value="member" selected>Member</option>
+                </select>
+                <button class="btn-add" onclick="saveToDatabase()">ADD OPERATIVE</button>
             </div>
+            <button onclick="logoutAdmin()" style="margin-top: 15px; color: #555; background: none; border: none; cursor: pointer;">[ LOGOUT ]</button>
         </div>
-    </section>
 
-    <section id="adminDashboardView" class="hidden max-w-4xl mx-auto px-4 mt-10">
-        <div class="admin-box p-6 mb-10">
-            <h3 class="text-sm font-bold mb-4 text-[#f3d48b]">เพิ่มสมาชิกใหม่ (จะบันทึกลงฐานข้อมูลทันที)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input type="text" id="newName" placeholder="ชื่อสมาชิก" class="bg-black border border-gray-800 rounded p-2 text-sm outline-none focus:border-red-600">
-                <input type="text" id="newFB" placeholder="Link Facebook" class="bg-black border border-gray-800 rounded p-2 text-sm outline-none focus:border-red-600">
-                <button onclick="addMember()" class="bg-red-600 hover:bg-red-700 rounded py-2 text-sm font-bold">บันทึกข้อมูล</button>
+        <div class="top-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="memberSearch" placeholder="SEARCH OPERATIVES..." onkeyup="searchFunction()">
             </div>
+            <button class="btn-admin-access" id="adminBtn" onclick="loginAdmin()">ADMIN ACCESS</button>
         </div>
-    </section>
+
+        <div class="section-title">FOUNDERS</div>
+        <div class="grid" id="founderGrid"></div>
+
+        <div class="section-title">COMMANDERS</div>
+        <div class="grid" id="leaderGrid"></div>
+
+        <div class="section-title">OPERATIVES</div>
+        <div class="grid" id="memberGrid"></div>
+
+        <div class="footer-tag" style="text-align: center; margin-top: 100px; opacity: 0.3; letter-spacing: 5px;">JQLUES CLOUD_SYSTEM // v1.0</div>
+    </div>
 
     <script>
-        // --- ส่วนที่ 1: ตั้งค่า Firebase (เปลี่ยนตรงนี้เป็นข้อมูลของคุณ) ---
+        // --- 1. การตั้งค่า ฐานข้อมูล (ใส่ URL ของคุณเองได้ที่นี่) ---
         const firebaseConfig = {
-            databaseURL: "https://your-project-id.firebaseio.com" 
+            databaseURL: "https://your-project-default-rtdb.firebaseio.com" // ใส่ URL จาก Firebase ของคุณ
         };
-        // หากยังไม่มี Firebase จะใช้ LocalStorage จำลองไปก่อนเพื่อให้โค้ดรันได้ทุกคน
-        const db = window.firebase ? firebase.initializeApp(firebaseConfig).database() : null;
 
-        // --- ส่วนที่ 2: Logic ระบบ ---
-        let isAdmin = false;
-        let members = JSON.parse(localStorage.getItem('dereck_members')) || [];
-        let filteredMembers = [];
-        let currentPage = 1;
-        const rowsPerPage = 10;
-
-        function showView(viewId) {
-            ['memberView', 'adminLoginView', 'adminDashboardView'].forEach(id => document.getElementById(id).classList.add('hidden'));
-            document.getElementById(viewId).classList.remove('hidden');
+        // เริ่มต้นการใช้งาน Firebase (หากยังไม่ได้ใส่ URL ระบบจะใช้งานไม่ได้จริง)
+        if (firebaseConfig.databaseURL.includes("your-project")) {
+            alert("กรุณานำ URL จาก Firebase Realtime Database มาใส่ในโค้ดส่วน firebaseConfig เพื่อใช้งานระบบออนไลน์!");
         }
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        function checkAdminStatus() {
-            if (isAdmin) showView('adminDashboardView');
-            else showView('adminLoginView');
-        }
+        // --- 2. ระบบดึงข้อมูลแบบ Real-time (ใครแก้ เห็นทุกคน) ---
+        db.ref('roster').on('value', (snapshot) => {
+            const data = snapshot.val();
+            renderRoster(data);
+        });
 
-        function handleLogin() {
-            if (document.getElementById('adminEmail').value === "calvyn088" && document.getElementById('adminPass').value === "0808024062") {
-                isAdmin = true;
-                document.getElementById('logoutBtn').classList.remove('hidden');
-                showView('adminDashboardView');
-                updateDisplay();
-            } else { alert("รหัสผิด!"); }
-        }
-
-        function logout() {
-            isAdmin = false;
-            document.getElementById('logoutBtn').classList.add('hidden');
-            showView('memberView');
-            updateDisplay();
-        }
-
-        // --- ส่วนที่ 3: จัดการข้อมูล (ทุกคนเห็นร่วมกันผ่าน Local/Firebase) ---
-        function addMember() {
-            const name = document.getElementById('newName').value;
-            const fb = document.getElementById('newFB').value;
-            if(!name) return;
-            
-            const newMember = {
-                id: Date.now(),
-                name: name,
-                role: 'DERECK',
-                fb: fb || '#',
-                img: `https://i.pravatar.cc/150?u=${Date.now()}`
+        function renderRoster(data) {
+            const grids = {
+                founder: document.getElementById('founderGrid'),
+                leader: document.getElementById('leaderGrid'),
+                member: document.getElementById('memberGrid')
             };
 
-            members.unshift(newMember);
-            saveData();
-            document.getElementById('newName').value = "";
-            document.getElementById('newFB').value = "";
-            alert("บันทึกสำเร็จ! ทุกคนจะเห็นข้อมูลใหม่นี้");
-            updateDisplay();
-        }
+            // ล้างข้อมูลเก่า
+            Object.values(grids).forEach(g => g.innerHTML = "");
 
-        function deleteMember(id) {
-            if(confirm('ลบหรือไม่?')) {
-                members = members.filter(m => m.id !== id);
-                saveData();
-                updateDisplay();
-            }
-        }
+            if (!data) return;
 
-        function saveData() {
-            // เซฟลงเครื่อง
-            localStorage.setItem('dereck_members', JSON.stringify(members));
-            // ถ้ามี Firebase ก็เซฟขึ้น Cloud
-            if(db) db.ref('members').set(members);
-        }
-
-        function loadData() {
-            if(db) {
-                db.ref('members').on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if(data) {
-                        members = data;
-                        updateDisplay();
-                    }
-                });
-            } else {
-                updateDisplay();
-            }
-        }
-
-        function updateDisplay() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            filteredMembers = members.filter(m => m.name.toLowerCase().includes(term));
-            displayMembers(currentPage);
-            setupPagination();
-        }
-
-        function displayMembers(page) {
-            const grid = document.getElementById('memberGrid');
-            grid.innerHTML = "";
-            let items = filteredMembers.slice((page-1)*rowsPerPage, page*rowsPerPage);
-
-            items.forEach(m => {
-                grid.innerHTML += `
-                    <div class="member-card rounded-2xl p-6 text-center ${isAdmin ? 'admin-mode' : ''}">
-                        <button onclick="deleteMember(${m.id})" class="delete-btn hover:bg-red-700 transition">×</button>
-                        <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-red-600 overflow-hidden bg-gray-900">
-                            <img src="${m.img}" class="w-full h-full object-cover">
+            Object.keys(data).forEach(id => {
+                const item = data[id];
+                const card = `
+                    <div class="member-card" data-name="${item.name}">
+                        <div class="avatar-box" style="background-image: url('${item.img || 'https://img5.pic.in.th/file/secure-sv1/Untitled-2320778d69d8713879.png'}')"></div>
+                        <div class="info">
+                            <span class="role-tag ${item.role}-text">${item.role}</span>
+                            <h4 class="name">${item.name}</h4>
+                            <a href="${item.fb}" target="_blank" class="social-btn">FACEBOOK</a>
                         </div>
-                        <h3 class="text-sm font-semibold truncate">${m.name}</h3>
-                        <p class="text-[10px] text-gray-500 mb-4 tracking-widest uppercase">${m.role}</p>
-                        <a href="${m.fb}" target="_blank" class="text-blue-500 text-xl"><i class="fab fa-facebook"></i></a>
-                    </div>`;
+                        ${isAdminLoggedIn ? `<button class="delete-btn" onclick="deleteMember('${id}')"><i class="fas fa-trash"></i></button>` : ''}
+                    </div>
+                `;
+                grids[item.role].innerHTML += card;
             });
         }
 
-        function setupPagination() {
-            const el = document.getElementById('pagination');
-            el.innerHTML = "";
-            let pageCount = Math.ceil(filteredMembers.length / rowsPerPage);
-            for (let i = 1; i <= pageCount; i++) {
-                let btn = document.createElement('button');
-                btn.innerText = i;
-                btn.className = `w-8 h-8 rounded-full text-sm ${currentPage === i ? 'bg-red-600 text-white' : 'text-gray-400'}`;
-                btn.onclick = () => { currentPage = i; displayMembers(i); setupPagination(); };
-                el.appendChild(btn);
+        // --- 3. ระบบ Admin Logic ---
+        let isAdminLoggedIn = false;
+
+        function loginAdmin() {
+            const user = prompt("Admin User:");
+            const pass = prompt("Admin Password:");
+            
+            // ตั้งค่ารหัสผ่านที่นี่
+            if (user === "calvyn" && pass === "0808") {
+                isAdminLoggedIn = true;
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('adminBtn').classList.add('hidden');
+                db.ref('roster').once('value', (s) => renderRoster(s.val())); // รีเฟรชเพื่อแสดงปุ่มลบ
+            } else {
+                alert("Access Denied.");
             }
         }
 
-        function handleSearch() { currentPage = 1; updateDisplay(); }
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminBtn').classList.remove('hidden');
+            location.reload();
+        }
 
-        // เริ่มโหลดข้อมูล
-        loadData();
+        function saveToDatabase() {
+            const name = document.getElementById('newName').value;
+            const fb = document.getElementById('newFB').value;
+            const role = document.getElementById('newRole').value;
+
+            if (!name || !fb) return alert("กรุณากรอกข้อมูลให้ครบ");
+
+            const newMemberRef = db.ref('roster').push();
+            newMemberRef.set({
+                name: name,
+                fb: fb,
+                role: role,
+                img: 'https://img5.pic.in.th/file/secure-sv1/Untitled-2320778d69d8713879.png'
+            });
+
+            // ล้างฟอร์ม
+            document.getElementById('newName').value = "";
+            document.getElementById('newFB').value = "";
+        }
+
+        function deleteMember(id) {
+            if (confirm("Confirm Termination of Operative?")) {
+                db.ref('roster/' + id).remove();
+            }
+        }
+
+        function searchFunction() {
+            const filter = document.getElementById('memberSearch').value.toUpperCase();
+            const cards = document.getElementsByClassName('member-card');
+            for (let card of cards) {
+                const name = card.getAttribute('data-name');
+                card.style.display = name.toUpperCase().includes(filter) ? "flex" : "none";
+            }
+        }
     </script>
 </body>
 </html>
