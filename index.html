@@ -6,6 +6,9 @@
     <title>Member List - DERECK168</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
         body {
@@ -13,7 +16,6 @@
             min-height: 100vh;
             color: white;
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
         }
         .member-card {
             background-color: rgba(45, 20, 20, 0.6);
@@ -24,37 +26,16 @@
         .member-card:hover {
             transform: translateY(-5px);
             background-color: rgba(70, 25, 25, 0.9);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-        .admin-box {
-            background-color: #1a0d0d;
-            border-radius: 1rem;
-            box-shadow: 0 0 30px rgba(0,0,0,0.7);
-        }
-        .login-btn {
-            background-color: #f3d48b;
-            color: #1a0d0d;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-        .login-btn:hover {
-            background-color: #e2c275;
-            transform: scale(1.02);
-        }
+        .admin-box { background-color: #1a0d0d; border-radius: 1rem; box-shadow: 0 0 30px rgba(0,0,0,0.7); }
+        .login-btn { background-color: #f3d48b; color: #1a0d0d; font-weight: bold; }
         .hidden { display: none; }
         .delete-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #dc2626;
-            color: white;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            font-size: 12px;
-            display: none;
+            position: absolute; top: 10px; right: 10px; background: #dc2626; color: white;
+            width: 25px; height: 25px; border-radius: 50%; font-size: 12px;
+            display: none; align-items: center; justify-content: center;
         }
-        .admin-mode .delete-btn { display: flex; align-items: center; justify-content: center; }
+        .admin-mode .delete-btn { display: flex; }
     </style>
 </head>
 <body>
@@ -62,89 +43,65 @@
     <nav class="flex justify-between items-center px-10 py-5 sticky top-0 z-50 bg-[#2b0a0a]/80 backdrop-blur-md">
         <div class="text-2xl font-bold tracking-widest cursor-pointer" onclick="showView('memberView')">DERECK168</div>
         <div class="space-x-6 text-sm flex items-center">
-            <button onclick="showView('memberView')" id="navMembers" class="text-gray-300 hover:text-white border-b-2 border-red-600 pb-1">Members</button>
+            <button onclick="showView('memberView')" id="navMembers" class="text-gray-300 border-b-2 border-red-600 pb-1">Members</button>
             <button onclick="checkAdminStatus()" id="navAdmin" class="text-gray-400 hover:text-white transition">Admin</button>
-            <button id="logoutBtn" onclick="logout()" class="hidden text-red-500 text-xs ml-4"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</button>
+            <button id="logoutBtn" onclick="logout()" class="hidden text-red-500 text-xs ml-4"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </nav>
 
     <section id="memberView">
         <header class="text-center mt-10 mb-16 relative">
-            <h2 class="text-5xl md:text-7xl font-black text-white/5 absolute left-1/2 -translate-x-1/2 -mt-4 md:-mt-8 tracking-[1rem] uppercase select-none">Memberlist</h2>
+            <h2 class="text-5xl md:text-7xl font-black text-white/5 absolute left-1/2 -translate-x-1/2 -mt-8 tracking-[1rem] uppercase select-none">Memberlist</h2>
             <h1 class="text-4xl font-bold relative z-10 tracking-widest uppercase">Dereck</h1>
-            
             <div class="mt-10 max-w-md mx-auto px-4 relative">
-                <span class="absolute inset-y-0 left-7 flex items-center text-gray-400">
-                    <i class="fas fa-search"></i>
-                </span>
                 <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search code name..." 
-                    class="w-full bg-black/40 border border-gray-700 rounded-full py-2.5 pl-10 pr-4 focus:outline-none focus:border-red-600 transition text-sm">
+                    class="w-full bg-black/40 border border-gray-700 rounded-full py-2.5 pl-10 pr-4 outline-none focus:border-red-600 transition text-sm">
             </div>
         </header>
-
-        <main id="memberGrid" class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            </main>
-
+        <main id="memberGrid" class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6"></main>
         <footer id="pagination" class="flex justify-center items-center space-x-2 my-12"></footer>
     </section>
 
-    <section id="adminLoginView" class="hidden animate-fadeIn">
-        <div class="flex flex-col items-center justify-center mt-20 px-4">
-            <h1 class="text-4xl font-bold tracking-widest mb-10 uppercase text-white/20">Admin System</h1>
-            <div class="admin-box w-full max-w-sm p-10">
-                <div class="text-center mb-8 border-b border-gray-700 pb-4">
-                    <span class="text-[#f3d48b] text-sm font-bold uppercase tracking-widest">Login</span>
-                </div>
-                <div class="space-y-6">
-                    <input type="text" id="adminEmail" placeholder="Username" class="w-full bg-black border border-gray-800 rounded py-2 px-3 focus:border-[#f3d48b] outline-none text-sm">
-                    <input type="password" id="adminPass" placeholder="Password" class="w-full bg-black border border-gray-800 rounded py-2 px-3 focus:border-[#f3d48b] outline-none text-sm">
-                    <button onclick="handleLogin()" class="login-btn w-full py-2.5 rounded text-sm uppercase">Login</button>
-                </div>
+    <section id="adminLoginView" class="hidden animate-fadeIn flex flex-col items-center mt-20 px-4">
+        <div class="admin-box w-full max-w-sm p-10">
+            <h2 class="text-[#f3d48b] text-center mb-8 font-bold tracking-widest uppercase border-b border-gray-700 pb-4">Admin Login</h2>
+            <div class="space-y-6">
+                <input type="text" id="adminEmail" placeholder="Username" class="w-full bg-black border border-gray-800 rounded py-2 px-3 outline-none focus:border-[#f3d48b] text-sm">
+                <input type="password" id="adminPass" placeholder="Password" class="w-full bg-black border border-gray-800 rounded py-2 px-3 outline-none focus:border-[#f3d48b] text-sm">
+                <button onclick="handleLogin()" class="login-btn w-full py-2.5 rounded text-sm uppercase">Login</button>
             </div>
         </div>
     </section>
 
-    <section id="adminDashboardView" class="hidden max-w-4xl mx-auto px-4 mt-10 animate-fadeIn">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold tracking-widest"><i class="fas fa-tools mr-2 text-red-600"></i> MANAGE MEMBERS</h2>
-            <button onclick="showView('memberView')" class="bg-gray-800 px-4 py-2 rounded text-xs">ดูหน้าเว็บ</button>
-        </div>
-
+    <section id="adminDashboardView" class="hidden max-w-4xl mx-auto px-4 mt-10">
         <div class="admin-box p-6 mb-10">
-            <h3 class="text-sm font-bold mb-4 text-[#f3d48b]">เพิ่มสมาชิกใหม่</h3>
+            <h3 class="text-sm font-bold mb-4 text-[#f3d48b]">เพิ่มสมาชิกใหม่ (จะบันทึกลงฐานข้อมูลทันที)</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <input type="text" id="newName" placeholder="ชื่อสมาชิก" class="bg-black border border-gray-800 rounded p-2 text-sm outline-none focus:border-red-600">
                 <input type="text" id="newFB" placeholder="Link Facebook" class="bg-black border border-gray-800 rounded p-2 text-sm outline-none focus:border-red-600">
-                <button onclick="addMember()" class="bg-red-600 hover:bg-red-700 rounded py-2 text-sm font-bold transition">บันทึกข้อมูล</button>
+                <button onclick="addMember()" class="bg-red-600 hover:bg-red-700 rounded py-2 text-sm font-bold">บันทึกข้อมูล</button>
             </div>
         </div>
     </section>
 
     <script>
-        // State
-        let isAdmin = false;
-        let members = [
-            { id: 1, name: 'Taro Dereck', role: 'DERECK', fb: '#', img: 'https://i.pravatar.cc/150?u=1' },
-            { id: 2, name: 'Park Dereck', role: 'DERECK', fb: '#', img: 'https://i.pravatar.cc/150?u=2' },
-            { id: 3, name: 'Degan Dereck', role: 'DERECK', fb: '#', img: 'https://i.pravatar.cc/150?u=3' },
-            { id: 4, name: 'Theboss Dereck', role: 'DERECK', fb: '#', img: 'https://i.pravatar.cc/150?u=4' },
-            { id: 5, name: 'Alex Dereck', role: 'DERECK', fb: '#', img: 'https://i.pravatar.cc/150?u=5' }
-        ];
+        // --- ส่วนที่ 1: ตั้งค่า Firebase (เปลี่ยนตรงนี้เป็นข้อมูลของคุณ) ---
+        const firebaseConfig = {
+            databaseURL: "https://your-project-id.firebaseio.com" 
+        };
+        // หากยังไม่มี Firebase จะใช้ LocalStorage จำลองไปก่อนเพื่อให้โค้ดรันได้ทุกคน
+        const db = window.firebase ? firebase.initializeApp(firebaseConfig).database() : null;
 
-        let filteredMembers = [...members];
+        // --- ส่วนที่ 2: Logic ระบบ ---
+        let isAdmin = false;
+        let members = JSON.parse(localStorage.getItem('dereck_members')) || [];
+        let filteredMembers = [];
         let currentPage = 1;
         const rowsPerPage = 10;
 
-        // View Controller
         function showView(viewId) {
-            ['memberView', 'adminLoginView', 'adminDashboardView'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
+            ['memberView', 'adminLoginView', 'adminDashboardView'].forEach(id => document.getElementById(id).classList.add('hidden'));
             document.getElementById(viewId).classList.remove('hidden');
-            
-            // Sync Nav UI
-            document.getElementById('navMembers').className = viewId === 'memberView' ? "text-gray-300 border-b-2 border-red-600 pb-1" : "text-gray-400";
-            document.getElementById('navAdmin').className = (viewId === 'adminLoginView' || viewId === 'adminDashboardView') ? "text-gray-300 border-b-2 border-red-600 pb-1" : "text-gray-400";
         }
 
         function checkAdminStatus() {
@@ -152,18 +109,13 @@
             else showView('adminLoginView');
         }
 
-        // Login System
         function handleLogin() {
-            const user = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPass').value;
-            if (user === "calvyn088" && pass === "0808024062") {
+            if (document.getElementById('adminEmail').value === "calvyn088" && document.getElementById('adminPass').value === "0808024062") {
                 isAdmin = true;
                 document.getElementById('logoutBtn').classList.remove('hidden');
                 showView('adminDashboardView');
                 updateDisplay();
-            } else {
-                alert("ข้อมูลไม่ถูกต้อง");
-            }
+            } else { alert("รหัสผิด!"); }
         }
 
         function logout() {
@@ -173,11 +125,11 @@
             updateDisplay();
         }
 
-        // Member Logic
+        // --- ส่วนที่ 3: จัดการข้อมูล (ทุกคนเห็นร่วมกันผ่าน Local/Firebase) ---
         function addMember() {
             const name = document.getElementById('newName').value;
             const fb = document.getElementById('newFB').value;
-            if(!name) return alert("กรุณาใส่ชื่อ");
+            if(!name) return;
             
             const newMember = {
                 id: Date.now(),
@@ -186,23 +138,47 @@
                 fb: fb || '#',
                 img: `https://i.pravatar.cc/150?u=${Date.now()}`
             };
-            
+
             members.unshift(newMember);
+            saveData();
             document.getElementById('newName').value = "";
             document.getElementById('newFB').value = "";
+            alert("บันทึกสำเร็จ! ทุกคนจะเห็นข้อมูลใหม่นี้");
             updateDisplay();
-            alert("เพิ่มสมาชิกเรียบร้อย");
         }
 
         function deleteMember(id) {
-            if(confirm('ยืนยันการลบสมาชิกนี้?')) {
+            if(confirm('ลบหรือไม่?')) {
                 members = members.filter(m => m.id !== id);
+                saveData();
+                updateDisplay();
+            }
+        }
+
+        function saveData() {
+            // เซฟลงเครื่อง
+            localStorage.setItem('dereck_members', JSON.stringify(members));
+            // ถ้ามี Firebase ก็เซฟขึ้น Cloud
+            if(db) db.ref('members').set(members);
+        }
+
+        function loadData() {
+            if(db) {
+                db.ref('members').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if(data) {
+                        members = data;
+                        updateDisplay();
+                    }
+                });
+            } else {
                 updateDisplay();
             }
         }
 
         function updateDisplay() {
-            filteredMembers = [...members];
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            filteredMembers = members.filter(m => m.name.toLowerCase().includes(term));
             displayMembers(currentPage);
             setupPagination();
         }
@@ -210,48 +186,39 @@
         function displayMembers(page) {
             const grid = document.getElementById('memberGrid');
             grid.innerHTML = "";
-            let start = rowsPerPage * (page - 1);
-            let end = start + rowsPerPage;
-            let items = filteredMembers.slice(start, end);
+            let items = filteredMembers.slice((page-1)*rowsPerPage, page*rowsPerPage);
 
             items.forEach(m => {
                 grid.innerHTML += `
                     <div class="member-card rounded-2xl p-6 text-center ${isAdmin ? 'admin-mode' : ''}">
-                        <button onclick="deleteMember(${m.id})" class="delete-btn hover:bg-red-700 transition"><i class="fas fa-times"></i></button>
+                        <button onclick="deleteMember(${m.id})" class="delete-btn hover:bg-red-700 transition">×</button>
                         <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-red-600 overflow-hidden bg-gray-900">
                             <img src="${m.img}" class="w-full h-full object-cover">
                         </div>
                         <h3 class="text-sm font-semibold truncate">${m.name}</h3>
                         <p class="text-[10px] text-gray-500 mb-4 tracking-widest uppercase">${m.role}</p>
-                        <a href="${m.fb}" target="_blank" class="text-blue-500 hover:text-blue-400 text-xl"><i class="fab fa-facebook"></i></a>
-                    </div>
-                `;
+                        <a href="${m.fb}" target="_blank" class="text-blue-500 text-xl"><i class="fab fa-facebook"></i></a>
+                    </div>`;
             });
         }
 
         function setupPagination() {
-            const paginationEl = document.getElementById('pagination');
-            paginationEl.innerHTML = "";
+            const el = document.getElementById('pagination');
+            el.innerHTML = "";
             let pageCount = Math.ceil(filteredMembers.length / rowsPerPage);
             for (let i = 1; i <= pageCount; i++) {
                 let btn = document.createElement('button');
                 btn.innerText = i;
-                btn.className = `w-8 h-8 rounded-full text-sm transition ${currentPage === i ? 'bg-red-600 text-white' : 'hover:bg-white/10 text-gray-400'}`;
+                btn.className = `w-8 h-8 rounded-full text-sm ${currentPage === i ? 'bg-red-600 text-white' : 'text-gray-400'}`;
                 btn.onclick = () => { currentPage = i; displayMembers(i); setupPagination(); };
-                paginationEl.appendChild(btn);
+                el.appendChild(btn);
             }
         }
 
-        function handleSearch() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            filteredMembers = members.filter(m => m.name.toLowerCase().includes(term));
-            currentPage = 1;
-            displayMembers(1);
-            setupPagination();
-        }
+        function handleSearch() { currentPage = 1; updateDisplay(); }
 
-        // Init
-        updateDisplay();
+        // เริ่มโหลดข้อมูล
+        loadData();
     </script>
 </body>
 </html>
