@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JQLUES - Elite Roster Control</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Kanit:wght@200;400&family=Mitr:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Kanit:wght@200;400;900&family=Mitr:wght@300&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -40,17 +40,25 @@
 
         .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
 
+        /* --- Brand Name Header --- */
+        #brand-name { 
+            font-weight: 900; /* หนาพิเศษ */
+            letter-spacing: 5px; 
+            font-family: 'Orbitron'; 
+            font-size: 1.5rem;
+            text-shadow: 0 0 15px rgba(243, 212, 139, 0.4);
+        }
+
         /* --- Navbar --- */
         nav { 
             display: flex; justify-content: space-between; padding: 15px 40px; 
             background: rgba(0,0,0,0.85); align-items: center; position: sticky; 
             top: 0; z-index: 100; backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color);
         }
-        #brand-name { font-weight: bold; letter-spacing: 3px; font-family: 'Orbitron'; }
         nav button { background: none; border: none; color: #555; cursor: pointer; font-size: 0.8rem; transition: var(--transition); font-family: 'Orbitron'; }
         nav button.active { color: #fff; text-shadow: 0 0 15px var(--primary); }
 
-        /* --- Admin Wrapper (Smooth Toggle) --- */
+        /* --- Admin Wrapper (Collapsible) --- */
         #adminWrapper {
             background: rgba(20, 10, 10, 0.95); border: 1px solid var(--primary); 
             border-radius: 20px; margin-bottom: 40px; overflow: hidden;
@@ -62,21 +70,31 @@
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 25px; cursor: pointer; background: rgba(243, 212, 139, 0.05);
         }
-        .admin-content { padding: 30px; transition: var(--transition); }
-        .admin-sub-title { font-family: 'Orbitron'; font-size: 0.75rem; color: var(--primary); margin-bottom: 20px; display: block; border-left: 3px solid var(--primary); padding-left: 10px; letter-spacing: 2px;}
+        .admin-content { padding: 30px; }
+        .admin-sub-title { font-family: 'Orbitron'; font-size: 0.75rem; color: var(--primary); margin-bottom: 20px; display: block; border-left: 3px solid var(--primary); padding-left: 10px; letter-spacing: 2px; font-weight: 700;}
 
         .admin-form input, .admin-form select { 
             background: rgba(0,0,0,0.7); border: 1px solid #333; color: #fff; 
             padding: 12px; border-radius: 8px; outline: none; transition: 0.3s; width: 100%; box-sizing: border-box;
         }
-        .admin-form input:focus { border-color: var(--primary); background: #000; }
         .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .btn-action { background: var(--primary); color: #000; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; font-size: 0.7rem; transition: 0.3s; }
-        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(243, 212, 139, 0.3); }
 
-        /* --- Roster UI --- */
-        .section-title { font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 5px; color: #444; margin: 60px 0 25px; display: flex; align-items: center; gap: 20px; }
-        .section-title::after { content: ""; height: 1px; flex-grow: 1; background: linear-gradient(to right, #222, transparent); }
+        /* --- Roster UI & Headers --- */
+        .section-title { 
+            font-family: 'Orbitron'; 
+            font-size: 1.1rem; /* ใหญ่ขึ้น */
+            font-weight: 900; /* หนาขึ้น */
+            letter-spacing: 8px; 
+            color: #fff; /* ขาวชัดเจน */
+            margin: 60px 0 25px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+        .section-title::after { content: ""; height: 2px; flex-grow: 1; background: linear-gradient(to right, #444, transparent); }
+
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
 
         .member-card {
@@ -90,18 +108,24 @@
 
         .avatar-box { width: 75px; height: 75px; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
         .status-pulse { position: absolute; bottom: 18px; left: 82px; width: 10px; height: 10px; background: var(--online-green); border-radius: 50%; box-shadow: 0 0 10px var(--online-green); }
-        .name { font-family: 'Orbitron'; font-size: 1.1rem; margin: 0; color: #eee; letter-spacing: 1px; }
+        
+        /* Member Names */
+        .name { font-family: 'Orbitron'; font-size: 1.15rem; margin: 0; color: #fff; font-weight: 900; letter-spacing: 1px; }
+        
+        .role-tag { font-family: 'Orbitron'; font-size: 0.65rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .role-founder { color: var(--primary); text-shadow: 0 0 5px var(--primary); }
+        .role-leader { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }
+        .role-member { color: #888; }
+
         .fb-link { font-size: 0.7rem; color: #555; text-decoration: none; margin-top: 8px; display: inline-block; transition: 0.3s; font-family: 'Orbitron'; }
         .fb-link:hover { color: var(--primary); }
+        
         .delete-btn { position: absolute; top: 15px; right: 15px; color: var(--danger); cursor: pointer; background: none; border: none; opacity: 0.3; transition: 0.3s; }
-        .member-card:hover .delete-btn { opacity: 1; }
 
         /* --- Music Player UI --- */
         .bottom-ui { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
         .music-mini-player { display: flex; align-items: center; background: rgba(15, 15, 15, 0.95); border: 1px solid var(--border-color); padding: 8px; width: 260px; cursor: pointer; backdrop-filter: blur(15px); border-radius: 12px; transition: var(--transition); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .music-mini-player:hover { border-color: var(--primary); transform: translateY(-5px); }
         .full-player { position: fixed; bottom: 30px; right: 30px; width: 320px; background: rgba(5, 5, 5, 0.98); border: 1px solid var(--border-color); padding: 25px; display: none; flex-direction: column; border-radius: 24px; backdrop-filter: blur(30px); box-shadow: 0 30px 80px rgba(0,0,0,1); animation: slideIn 0.5s ease; }
-        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .hidden { display: none !important; }
         .toast { position: fixed; top: 100px; right: 20px; background: var(--primary); color: #000; padding: 15px 35px; border-radius: 12px; font-weight: bold; transform: translateX(150%); transition: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-family: 'Orbitron'; font-size: 0.8rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -123,7 +147,7 @@
     <div class="container">
         <section id="adminLoginView" class="hidden" style="display: flex; align-items: center; justify-content: center; min-height: 70vh;">
             <div style="background: rgba(15, 15, 15, 0.95); padding: 50px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #222;">
-                <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 35px; letter-spacing: 5px;">ACCESS GATE</h2>
+                <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 35px; letter-spacing: 5px; font-weight: 900;">ACCESS GATE</h2>
                 <input type="text" id="loginUser" placeholder="OPERATOR ID" style="width:100%; background:#000; border:1px solid #333; padding:15px; margin-bottom:15px; color:#fff; border-radius:12px; outline:none; text-align:center; font-family:'Orbitron';">
                 <input type="password" id="loginPass" placeholder="PASSKEY" style="width:100%; background:#000; border:1px solid #333; padding:15px; margin-bottom:30px; color:#fff; border-radius:12px; outline:none; text-align:center; font-family:'Orbitron';">
                 <button onclick="handleLogin()" style="width:100%; background:var(--primary); padding:18px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-family:'Orbitron'; letter-spacing:2px;">INITIALIZE</button>
@@ -131,10 +155,17 @@
         </section>
 
         <section id="memberView">
+            <div class="search-container" style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                <div style="position: relative; width: 300px;">
+                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary);"></i>
+                    <input type="text" id="memberSearch" placeholder="SEARCH OPERATIVES..." onkeyup="filterMembers()" style="width:100%; background:rgba(255,255,255,0.03); border:none; border-bottom:2px solid var(--border-color); padding:10px 15px; color:#fff; font-family:'Rajdhani'; outline:none;">
+                </div>
+            </div>
+
             <div id="adminPanel" class="hidden">
                 <div id="adminWrapper">
                     <div class="admin-header" onclick="toggleAdminPanel()">
-                        <span style="color: var(--primary); font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 2px;">
+                        <span style="color: var(--primary); font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 2px; font-weight: 900;">
                             <i class="fas fa-shield-alt mr-2"></i> COMMAND CENTER
                         </span>
                         <span id="collapseIcon" style="color: #444; font-family: 'Orbitron'; font-size: 0.7rem;">[ - ] HIDE PANEL</span>
@@ -150,7 +181,6 @@
                             </select>
                             <input type="text" id="editBG" placeholder="Background URL">
                         </div>
-                        
                         <span class="admin-sub-title">MUSIC MANAGER</span>
                         <div class="admin-grid">
                             <input type="text" id="editMusicTitle" placeholder="Song Title">
@@ -159,7 +189,6 @@
                             <input type="text" id="editMusicId" placeholder="YouTube Video ID">
                         </div>
                         <button class="btn-action" onclick="updateSettings()" style="width:100%; margin-bottom: 35px; background: #222; color: #fff;">SYNC SYSTEM & MUSIC</button>
-
                         <span class="admin-sub-title">OPERATIVE REGISTRATION</span>
                         <div class="admin-grid">
                             <input type="hidden" id="editMemberId">
@@ -180,14 +209,20 @@
                 </div>
             </div>
 
-            <div class="section-title">FOUNDERS</div>
-            <div class="grid" id="founderGrid"></div>
-
-            <div class="section-title">LEADER</div>
-            <div class="grid" id="leaderGrid"></div>
-
-            <div class="section-title">MEMBER CALVYN</div>
-            <div class="grid" id="memberGrid"></div>
+            <div id="rosterSections">
+                <div id="founderSection">
+                    <div class="section-title">01_FOUNDERS</div>
+                    <div class="grid" id="founderGrid"></div>
+                </div>
+                <div id="leaderSection">
+                    <div class="section-title">02_COMMANDERS</div>
+                    <div class="grid" id="leaderGrid"></div>
+                </div>
+                <div id="memberSection">
+                    <div class="section-title">03_OPERATIVES</div>
+                    <div class="grid" id="memberGrid"></div>
+                </div>
+            </div>
         </section>
     </div>
 
@@ -195,7 +230,7 @@
         <div class="music-mini-player" id="miniPlayer" onclick="togglePlayer()">
             <img src="" class="mini-art" id="miniArt" style="width:45px; height:45px; border-radius:5px; object-fit:cover;">
             <div style="flex:1; padding-left:15px; overflow:hidden;">
-                <span id="displayMiniTitle" style="font-family:'Orbitron'; font-size:0.6rem; color:#fff; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">STARBOY</span>
+                <span id="displayMiniTitle" style="font-family:'Orbitron'; font-size:0.6rem; color:#fff; display:block; font-weight:900;">STARBOY</span>
                 <span id="displayMiniArtist" style="font-size:0.5rem; color:#666;">THE WEEKND</span>
             </div>
             <i class="fa-solid fa-chevron-up" style="color:#444; font-size: 0.7rem; margin: 0 10px;"></i>
@@ -203,24 +238,21 @@
 
         <div class="full-player" id="fullPlayer">
             <div style="display:flex; justify-content:space-between; font-size:0.6rem; color:#444; margin-bottom:20px; font-family:'Orbitron';">
-                <span onclick="togglePlayer()" style="cursor:pointer;"><i class="fas fa-chevron-down"></i> DISMISS</span>
-                <span style="color:var(--danger);"><i class="fas fa-circle" style="font-size:4px; vertical-align:middle;"></i> LIVE SYNC</span>
+                <span onclick="togglePlayer()" style="cursor:pointer;">HIDE</span>
+                <span style="color:var(--danger); font-weight:900;">LIVE SYNC</span>
             </div>
             <img src="" id="fullArt" style="width:100%; border-radius:15px; margin-bottom:25px; box-shadow: 0 15px 40px rgba(0,0,0,0.5);">
             <div style="text-align:center; margin-bottom:25px;">
-                <h2 id="fullTitle" style="font-family:'Orbitron'; font-size:1rem; margin:0; letter-spacing:2px;">STARBOY</h2>
-                <p id="fullArtist" style="font-size:0.6rem; color:#666; margin:8px 0 0 0; letter-spacing:3px;">THE WEEKND FT. DAFT PUNK</p>
+                <h2 id="fullTitle" style="font-family:'Orbitron'; font-size:1rem; margin:0; font-weight:900;">STARBOY</h2>
+                <p id="fullArtist" style="font-size:0.6rem; color:#666; margin:8px 0 0 0; letter-spacing:3px;">THE WEEKND</p>
             </div>
-            <div style="width:100%; height:3px; background:#1a1a1a; margin-bottom:25px; cursor:pointer; border-radius:10px;" onclick="seek(event)">
-                <div id="progressLine" style="height:100%; background:var(--danger); width:0%; border-radius:10px;"></div>
+            <div style="width:100%; height:3px; background:#1a1a1a; margin-bottom:25px; cursor:pointer;" onclick="seek(event)">
+                <div id="progressLine" style="height:100%; background:var(--danger); width:0%;"></div>
             </div>
             <div style="display:flex; justify-content:center; margin-bottom:25px;">
                 <button onclick="togglePlay()" style="background:#fff; color:#000; width:60px; height:60px; border-radius:50%; border:none; cursor:pointer;"><i class="fa-solid fa-play" id="playIcon"></i></button>
             </div>
-            <div style="display:flex; align-items:center; gap:12px;">
-                <i class="fa-solid fa-volume-low" style="color:#333; font-size:0.8rem;"></i>
-                <input type="range" min="0" max="100" value="20" oninput="changeVolume(this.value)" style="flex:1; accent-color:#555; height:3px;">
-            </div>
+            <input type="range" min="0" max="100" value="20" oninput="changeVolume(this.value)" style="width:100%; accent-color:#555;">
         </div>
     </div>
 
@@ -247,7 +279,15 @@
             icon.innerText = wrapper.classList.contains('collapsed') ? "[ + ] SHOW PANEL" : "[ - ] HIDE PANEL";
         }
 
-        // --- YouTube API ---
+        function filterMembers() {
+            const val = document.getElementById('memberSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.member-card');
+            cards.forEach(card => {
+                const name = card.querySelector('.name').innerText.toLowerCase();
+                card.style.display = name.includes(val) ? 'flex' : 'none';
+            });
+        }
+
         var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api";
         document.head.append(tag);
 
@@ -256,7 +296,7 @@
                 const config = s.val() || {};
                 const vidId = config.musicUrl || 'XXYlFuWEuKI';
                 player = new YT.Player('yt-player', {
-                    videoId: vidId, playerVars: { 'autoplay': 1, 'playlist': vidId, 'controls': 0 },
+                    videoId: vidId, playerVars: { 'autoplay': 1, 'playlist': vidId },
                     events: {
                         'onReady': (e) => { e.target.setVolume(20); updateProgress(); },
                         'onStateChange': (e) => {
@@ -286,15 +326,12 @@
             }, 500);
         }
 
-        // --- Firebase Sync ---
         db.ref('settings').on('value', (snapshot) => {
             const s = snapshot.val() || {};
-            // Web Config
             document.getElementById('brand-name').innerText = s.brandName || "CALVYN";
             document.getElementById('brand-name').style.fontFamily = s.fontFamily || "'Orbitron'";
             document.body.style.backgroundImage = s.bgUrl ? `url('${s.bgUrl}')` : "url('https://img1.pic.in.th/images/calvyn.png')";
             
-            // Music UI Update
             const musicTitle = s.musicTitle || "STARBOY";
             const musicArtist = s.musicArtist || "THE WEEKND";
             const musicImg = s.musicImg || `https://i.ytimg.com/vi/${s.musicUrl || 'XXYlFuWEuKI'}/maxresdefault.jpg`;
@@ -306,7 +343,6 @@
             document.getElementById('fullTitle').innerText = musicTitle;
             document.getElementById('fullArtist').innerText = musicArtist;
 
-            // Player Logic
             if(s.musicUrl && player && player.loadVideoById) {
                 if(player.getVideoData().video_id !== s.musicUrl) {
                     player.loadVideoById(s.musicUrl);
@@ -343,7 +379,6 @@
             });
         });
 
-        // --- Admin Handlers ---
         function updateSettings() {
             db.ref('settings').update({
                 brandName: document.getElementById('editBrand').value || "CALVYN",
@@ -366,7 +401,7 @@
             document.getElementById('addBtn').innerText = "UPDATE OPERATIVE";
             document.getElementById('cancelEditBtn').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            showToast("EDIT MODE: " + data.name.toUpperCase());
+            showToast("EDIT MODE ACTIVE");
         }
 
         function resetMemberForm() {
