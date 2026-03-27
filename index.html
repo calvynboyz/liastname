@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
         body {
             background: linear-gradient(to bottom, #2b0a0a, #121212);
             min-height: 100vh;
@@ -16,72 +17,149 @@
         .member-card {
             background-color: rgba(45, 20, 20, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
         }
         .member-card:hover {
             transform: translateY(-5px);
-            background-color: rgba(60, 25, 25, 0.8);
+            background-color: rgba(70, 25, 25, 0.9);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        .page-btn.active {
+            background-color: #dc2626; /* red-600 */
+            color: white;
         }
     </style>
 </head>
 <body>
 
     <nav class="flex justify-between items-center px-10 py-5">
-        <div class="text-2xl font-bold tracking-widest">DERECK168</div>
+        <div class="text-2xl font-bold tracking-widest cursor-pointer" onclick="location.reload()">DERECK168</div>
         <div class="space-x-6 text-sm">
             <a href="#" class="text-gray-300 hover:text-white border-b-2 border-red-600 pb-1">Members</a>
-            <a href="#" class="text-gray-400 hover:text-white">Admin</a>
+            <button onclick="adminLogin()" class="text-gray-400 hover:text-white transition">Admin</button>
         </div>
     </nav>
 
-    <header class="text-center mt-10 mb-16">
-        <h2 class="text-6xl font-black text-white/10 absolute left-1/2 -translate-x-1/2 -mt-8 tracking-[1rem] uppercase">Memberlist</h2>
+    <header class="text-center mt-10 mb-16 relative">
+        <h2 class="text-5xl md:text-7xl font-black text-white/5 absolute left-1/2 -translate-x-1/2 -mt-4 md:-mt-8 tracking-[1rem] uppercase select-none">Memberlist</h2>
         <h1 class="text-4xl font-bold relative z-10 tracking-widest">DERECK</h1>
         
-        <div class="mt-10 max-w-md mx-auto relative">
-            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+        <div class="mt-10 max-w-md mx-auto px-4 relative">
+            <span class="absolute inset-y-0 left-7 flex items-center text-gray-400">
                 <i class="fas fa-search"></i>
             </span>
-            <input type="text" placeholder="Search code name..." 
-                class="w-full bg-black/40 border border-gray-700 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:border-red-600 transition">
+            <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Search code name..." 
+                class="w-full bg-black/40 border border-gray-700 rounded-full py-2.5 pl-10 pr-4 focus:outline-none focus:border-red-600 transition text-sm">
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        
-        <div class="member-card rounded-2xl p-8 text-center">
-            <div class="w-24 h-24 mx-auto mb-4 rounded-full border-2 border-red-600 overflow-hidden bg-gray-800">
-                <img src="https://via.placeholder.com/150" alt="profile" class="w-full h-full object-cover">
-            </div>
-            <h3 class="text-lg font-semibold">Taro Winterfell</h3>
-            <p class="text-xs text-gray-400 mb-4 tracking-tighter">DERECK</p>
-            <a href="#" class="text-blue-500 hover:text-blue-400 text-2xl">
-                <i class="fab fa-facebook"></i>
-            </a>
-        </div>
-
-        <div class="member-card rounded-2xl p-8 text-center">
-            <div class="w-24 h-24 mx-auto mb-4 rounded-full border-2 border-red-600 overflow-hidden bg-gray-800">
-                <img src="https://via.placeholder.com/150" alt="profile" class="w-full h-full object-cover">
-            </div>
-            <h3 class="text-lg font-semibold">Park Winterfell</h3>
-            <p class="text-xs text-gray-400 mb-4 tracking-tighter">DERECK</p>
-            <a href="#" class="text-blue-500 hover:text-blue-400 text-2xl">
-                <i class="fab fa-facebook"></i>
-            </a>
-        </div>
-
+    <main id="memberGrid" class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         </main>
 
-    <footer class="flex justify-center items-center space-x-2 my-12">
-        <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-left text-xs"></i></button>
-        <button class="w-8 h-8 rounded-full bg-red-600 text-white text-sm">1</button>
-        <button class="w-8 h-8 rounded-full hover:bg-white/10 text-sm">2</button>
-        <button class="w-8 h-8 rounded-full hover:bg-white/10 text-sm">3</button>
-        <span class="text-gray-500">...</span>
-        <button class="w-8 h-8 rounded-full hover:bg-white/10 text-sm">20</button>
-        <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-chevron-right text-xs"></i></button>
-    </footer>
+    <footer id="pagination" class="flex justify-center items-center space-x-2 my-12">
+        </footer>
 
+    <script>
+        // 1. จำลองข้อมูลสมาชิก (45 คน)
+        const allMembers = Array.from({ length: 45 }, (_, i) => ({
+            id: i + 1,
+            name: i % 3 === 0 ? `Taro ${i+1}` : i % 2 === 0 ? `Park ${i+1}` : `Degan ${i+1}`,
+            lastname: 'Winterfell',
+            role: 'DERECK',
+            fb: '#',
+            img: `https://i.pravatar.cc/150?u=${i}`
+        }));
+
+        let filteredMembers = [...allMembers];
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
+        // 2. ฟังก์ชันแสดงการ์ดสมาชิก
+        function displayMembers(page) {
+            const grid = document.getElementById('memberGrid');
+            grid.innerHTML = "";
+            page--;
+
+            let start = rowsPerPage * page;
+            let end = start + rowsPerPage;
+            let paginatedItems = filteredMembers.slice(start, end);
+
+            if (paginatedItems.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">ไม่พบรายชื่อสมาชิกที่คุณค้นหา</p>`;
+                return;
+            }
+
+            paginatedItems.forEach(m => {
+                grid.innerHTML += `
+                    <div class="member-card rounded-2xl p-6 text-center animate-fadeIn">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-red-600 overflow-hidden bg-gray-800">
+                            <img src="${m.img}" alt="profile" class="w-full h-full object-cover">
+                        </div>
+                        <h3 class="text-md font-semibold truncate">${m.name}</h3>
+                        <p class="text-[10px] text-gray-500 mb-4 tracking-widest">${m.role}</p>
+                        <a href="${m.fb}" target="_blank" class="text-blue-500 hover:text-blue-400 text-xl transition transform hover:scale-110 inline-block">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </div>
+                `;
+            });
+        }
+
+        // 3. ฟังก์ชันสร้างปุ่มเปลี่ยนหน้า
+        function setupPagination() {
+            const paginationEl = document.getElementById('pagination');
+            paginationEl.innerHTML = "";
+
+            let pageCount = Math.ceil(filteredMembers.length / rowsPerPage);
+            
+            // ปุ่ม Back
+            paginationEl.innerHTML += `<button onclick="changePage(${currentPage - 1})" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white ${currentPage === 1 ? 'invisible' : ''}"><i class="fas fa-chevron-left text-xs"></i></button>`;
+
+            for (let i = 1; i <= pageCount; i++) {
+                let btn = document.createElement('button');
+                btn.innerText = i;
+                btn.className = `w-8 h-8 rounded-full text-sm transition ${currentPage === i ? 'bg-red-600 text-white' : 'hover:bg-white/10 text-gray-400'}`;
+                btn.onclick = () => changePage(i);
+                paginationEl.appendChild(btn);
+            }
+
+            // ปุ่ม Next
+            paginationEl.innerHTML += `<button onclick="changePage(${currentPage + 1})" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white ${currentPage === pageCount || pageCount === 0 ? 'invisible' : ''}"><i class="fas fa-chevron-right text-xs"></i></button>`;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            displayMembers(currentPage);
+            setupPagination();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 4. ระบบค้นหา
+        function handleSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filteredMembers = allMembers.filter(m => 
+                m.name.toLowerCase().includes(searchTerm)
+            );
+            currentPage = 1;
+            displayMembers(currentPage);
+            setupPagination();
+        }
+
+        // 5. ระบบ Admin (จำลอง)
+        function adminLogin() {
+            const pass = prompt("กรุณาใส่รหัสผ่านผู้ดูแลระบบ:");
+            if (pass === "1234") { // ตั้งรหัสผ่านที่นี่
+                alert("ยินดีต้อนรับ Admin! คุณสามารถแก้ไขข้อมูลได้แล้ว (ระบบจัดการหลังบ้านกำลังพัฒนา)");
+                // ตรงนี้สามารถ redirect ไปหน้า admin.html ได้
+            } else if (pass !== null) {
+                alert("รหัสผ่านไม่ถูกต้อง!");
+            }
+        }
+
+        // เริ่มต้นการทำงาน
+        displayMembers(currentPage);
+        setupPagination();
+
+    </script>
 </body>
 </html>
