@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JQLUES - Elite Roster Control</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Kanit:wght@200;400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Kanit:wght@200;400;900&family=Mitr:wght@300&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -13,9 +13,10 @@
     <style>
         :root {
             --primary: #f3d48b;
+            --login-accent: #ffc107;
             --bg-dark: #050505;
             --card-bg: rgba(15, 15, 15, 0.85);
-            --border-color: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.08);
             --online-green: #00ff88;
             --danger: #ff0000;
             --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -40,87 +41,54 @@
 
         .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
 
-        /* --- Navbar --- */
-        nav { 
-            display: flex; justify-content: space-between; padding: 15px 40px; 
-            background: rgba(0,0,0,0.85); align-items: center; position: sticky; 
-            top: 0; z-index: 100; backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color);
-        }
-        #brand-name { font-weight: 900; letter-spacing: 5px; font-family: 'Orbitron'; font-size: 1.6rem; color: #fff; text-shadow: 0 0 15px rgba(243, 212, 139, 0.4); }
-        nav button { background: none; border: none; color: #666; cursor: pointer; font-size: 0.8rem; transition: var(--transition); font-family: 'Orbitron'; font-weight: 700; }
-        nav button.active { color: #fff; text-shadow: 0 0 15px var(--primary); }
-
-        /* --- Admin Login Section (White Theme) --- */
-        #adminLoginView .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 50px; border-radius: 30px; width: 100%; max-width: 380px; text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6); color: #111;
-            transform: translateY(20px); animation: loginShow 0.8s forwards;
-        }
-        @keyframes loginShow { to { opacity: 1; transform: translateY(0); } }
-        #adminLoginView h2 { font-family: 'Orbitron'; font-weight: 900; color: #111; margin-bottom: 30px; letter-spacing: 3px; }
-        #adminLoginView input { width: 100%; background: #f4f4f4; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; color: #000; border-radius: 12px; outline: none; transition: 0.3s; font-weight: 700; text-align: center; }
-        #adminLoginView input:focus { border-color: #111; background: #fff; }
-        #adminLoginView button { width: 100%; background: #111; color: #fff; padding: 18px; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; letter-spacing: 2px; transition: 0.3s; }
-        #adminLoginView button:hover { background: var(--danger); transform: scale(1.02); }
-
-        /* --- Admin Wrapper --- */
-        #adminWrapper {
-            background: rgba(20, 10, 10, 0.95); border: 1px solid var(--primary); 
-            border-radius: 20px; margin-bottom: 40px; overflow: hidden;
-            transition: var(--transition); max-height: 2000px;
-            backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        #adminWrapper.collapsed { max-height: 55px; border-color: #222; }
-        .admin-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 25px; cursor: pointer; background: rgba(243, 212, 139, 0.05);
-        }
-        .admin-content { padding: 30px; }
-        .admin-sub-title { font-family: 'Orbitron'; font-size: 0.75rem; color: var(--primary); margin-bottom: 20px; display: block; border-left: 5px solid var(--primary); padding-left: 10px; font-weight: 900; letter-spacing: 2px; }
-
-        /* --- Roster Headers (หนาและชัด) --- */
+        /* --- Brand & Headers (หนาพิเศษ) --- */
+        #brand-name { font-weight: 900; letter-spacing: 5px; font-family: 'Orbitron'; font-size: 1.6rem; }
         .section-title { 
             font-family: 'Orbitron'; font-size: 1.2rem; font-weight: 900; 
             letter-spacing: 12px; color: #fff; margin: 70px 0 30px; 
             display: flex; align-items: center; gap: 20px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            text-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
-        .section-title::after { content: ""; height: 3px; flex-grow: 1; background: linear-gradient(to right, #444, transparent); }
+        .section-title::after { content: ""; height: 3px; flex-grow: 1; background: linear-gradient(to right, #333, transparent); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        /* --- Navbar --- */
+        nav { display: flex; justify-content: space-between; padding: 15px 40px; background: rgba(0,0,0,0.85); align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color); }
+        nav button { background: none; border: none; color: #555; cursor: pointer; font-size: 0.8rem; transition: var(--transition); font-family: 'Orbitron'; font-weight: 700; }
+        nav button.active { color: #fff; text-shadow: 0 0 15px var(--primary); }
 
-        .member-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 22px; display: flex; align-items: center; gap: 20px;
-            border-radius: 10px; position: relative; backdrop-filter: blur(15px); 
-            transition: var(--transition); opacity: 0; transform: translateY(20px);
-            cursor: pointer;
+        /* --- Login Section (White Theme ตามรูป) --- */
+        #adminLoginView .login-card {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 50px 40px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5); color: #111;
+            transition: var(--transition);
         }
+        #adminLoginView h2 { font-family: 'Orbitron'; font-weight: 900; color: #111; margin-bottom: 35px; letter-spacing: 2px; font-size: 1.8rem; }
+        #adminLoginView .input-wrap { text-align: left; margin-bottom: 20px; }
+        #adminLoginView label { display: block; font-weight: 700; font-size: 0.8rem; color: #777; margin-bottom: 8px; margin-left: 5px; }
+        #adminLoginView input { width: 100%; background: #f0f0f0; border: 1px solid #ddd; padding: 14px; color: #111; border-radius: 8px; outline: none; transition: 0.3s; box-sizing: border-box; font-weight: 700; }
+        #adminLoginView input:focus { border-color: #111; background: #fff; }
+        #adminLoginView .btn-login { width: 100%; background: #ffc107; color: #000; padding: 15px; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; letter-spacing: 2px; margin-top: 10px; transition: 0.3s; }
+        #adminLoginView .btn-login:hover { background: #e0ac00; transform: scale(1.02); }
+
+        /* --- Admin Wrapper --- */
+        #adminWrapper { background: rgba(20, 10, 10, 0.95); border: 1px solid var(--primary); border-radius: 20px; margin-bottom: 40px; overflow: hidden; transition: var(--transition); max-height: 2000px; backdrop-filter: blur(20px); }
+        #adminWrapper.collapsed { max-height: 55px; border-color: #222; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; cursor: pointer; background: rgba(243, 212, 139, 0.05); }
+        .admin-content { padding: 30px; }
+        .admin-sub-title { font-family: 'Orbitron'; font-size: 0.75rem; color: var(--primary); margin-bottom: 20px; display: block; border-left: 5px solid var(--primary); padding-left: 10px; font-weight: 900; letter-spacing: 2px; }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+
+        /* --- Member Card --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .member-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 22px; display: flex; align-items: center; gap: 20px; border-radius: 10px; position: relative; backdrop-filter: blur(15px); transition: var(--transition); opacity: 0; transform: translateY(20px); cursor: pointer; }
         .member-card.show { opacity: 1; transform: translateY(0); }
         .member-card:hover { border-color: var(--primary); background: rgba(35, 35, 35, 0.95); transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-
         .avatar-box { width: 80px; height: 80px; background-size: cover; background-position: center; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); }
-        .member-card:hover .avatar-box { transform: scale(1.05); border-color: var(--primary); }
-        .status-pulse { position: absolute; bottom: 20px; left: 88px; width: 12px; height: 12px; background: var(--online-green); border-radius: 50%; box-shadow: 0 0 15px var(--online-green); border: 2px solid #000; }
-        
         .name { font-family: 'Orbitron'; font-size: 1.25rem; margin: 0; color: #fff; font-weight: 900; letter-spacing: 1px; }
-        .role-tag { font-family: 'Orbitron'; font-size: 0.65rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .role-founder { color: var(--primary); }
-        .role-leader { color: #e74c3c; }
-        .role-member { color: #aaa; }
-
-        .fb-link { font-size: 0.75rem; color: #555; text-decoration: none; margin-top: 8px; display: inline-block; transition: 0.3s; font-family: 'Orbitron'; font-weight: 700; }
-        .fb-link:hover { color: #fff; letter-spacing: 1px; }
-
-        /* --- Player Smooth UI --- */
-        .bottom-ui { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
-        .music-mini-player { display: flex; align-items: center; background: rgba(15, 15, 15, 0.98); border: 1px solid var(--border-color); padding: 10px; width: 270px; cursor: pointer; border-radius: 15px; transition: var(--transition); box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .music-mini-player:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .full-player { position: fixed; bottom: 30px; right: 30px; width: 330px; background: rgba(8, 8, 8, 0.99); border: 1px solid var(--border-color); padding: 30px; display: none; flex-direction: column; border-radius: 25px; box-shadow: 0 30px 100px rgba(0,0,0,1); animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
 
         .hidden { display: none !important; }
-        .toast { position: fixed; top: 100px; right: 20px; background: #fff; color: #000; padding: 18px 40px; border-radius: 15px; font-weight: 900; transform: translateX(150%); transition: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-family: 'Orbitron'; font-size: 0.85rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .toast { position: fixed; top: 100px; right: 20px; background: #fff; color: #000; padding: 18px 40px; border-radius: 15px; font-weight: 900; transform: translateX(150%); transition: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-family: 'Orbitron'; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
         .toast.show { transform: translateX(0); }
     </style>
 </head>
@@ -140,9 +108,15 @@
         <section id="adminLoginView" class="hidden" style="display: flex; align-items: center; justify-content: center; min-height: 70vh;">
             <div class="login-card">
                 <h2>ADMIN LOGIN</h2>
-                <input type="text" id="loginUser" placeholder="OPERATOR ID">
-                <input type="password" id="loginPass" placeholder="PASSKEY">
-                <button onclick="handleLogin()">INITIALIZE SYSTEM</button>
+                <div class="input-wrap">
+                    <label>Email</label>
+                    <input type="text" id="loginUser" placeholder="Enter operator ID">
+                </div>
+                <div class="input-wrap">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter secure key">
+                </div>
+                <button class="btn-login" onclick="handleLogin()">LOGIN</button>
             </div>
         </section>
 
@@ -150,7 +124,7 @@
             <div class="search-container" style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
                 <div style="position: relative; width: 320px;">
                     <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary);"></i>
-                    <input type="text" id="memberSearch" placeholder="SEARCH OPERATIVES..." onkeyup="filterMembers()" style="width:100%; background:rgba(255,255,255,0.03); border:none; border-bottom:3px solid var(--border-color); padding:12px 15px; color:#fff; font-family:'Rajdhani'; outline:none; font-weight: 700; transition: 0.3s;">
+                    <input type="text" id="memberSearch" placeholder="SEARCH OPERATIVES..." onkeyup="filterMembers()" style="width:100%; background:rgba(255,255,255,0.03); border:none; border-bottom:3px solid var(--primary); padding:12px 15px; color:#fff; font-family:'Rajdhani'; outline:none; font-weight: 700;">
                 </div>
             </div>
 
@@ -173,14 +147,14 @@
                             </select>
                             <input type="text" id="editBG" placeholder="Background URL">
                         </div>
-                        <span class="admin-sub-title">MUSIC & COVER</span>
+                        <span class="admin-sub-title">MUSIC MANAGER</span>
                         <div class="admin-grid">
-                            <input type="text" id="editMusicTitle" placeholder="Song Name">
+                            <input type="text" id="editMusicTitle" placeholder="Song Title">
                             <input type="text" id="editMusicArtist" placeholder="Artist">
-                            <input type="text" id="editMusicImg" placeholder="Cover Image URL">
+                            <input type="text" id="editMusicImg" placeholder="Cover URL">
                             <input type="text" id="editMusicId" placeholder="YouTube Video ID">
                         </div>
-                        <button class="btn-action" onclick="updateSettings()" style="width:100%; margin-bottom: 35px; background: #222; color: #fff;">SYNC GLOBAL SETTINGS</button>
+                        <button class="btn-action" onclick="updateSettings()" style="width:100%; margin-bottom: 35px; background: #222; color: #fff; border:none; padding:12px; border-radius:8px; font-family:'Orbitron'; cursor:pointer;">SYNC GLOBAL SETTINGS</button>
                         <span class="admin-sub-title">OPERATIVE MANAGER</span>
                         <div class="admin-grid">
                             <input type="hidden" id="editMemberId">
@@ -194,24 +168,26 @@
                             </select>
                         </div>
                         <div style="display:flex; gap:12px;">
-                            <button onclick="saveToDB()" id="addBtn" class="btn-action" style="flex:1;">ADD OPERATIVE</button>
+                            <button onclick="saveToDB()" id="addBtn" class="btn-action" style="flex:1; background:var(--primary); color:#000; border:none; padding:15px; border-radius:8px; font-weight:900; font-family:'Orbitron'; cursor:pointer;">ADD OPERATIVE</button>
                             <button onclick="resetMemberForm()" id="cancelEditBtn" class="hidden" style="background: #333; color: #fff; border: none; padding: 0 25px; border-radius: 8px; cursor: pointer; font-family:'Orbitron'; font-size:0.7rem;">CANCEL</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="founderSection">
-                <div class="section-title">FOUNDERS</div>
-                <div class="grid" id="founderGrid"></div>
-            </div>
-            <div id="leaderSection">
-                <div class="section-title">LEADERS</div>
-                <div class="grid" id="leaderGrid"></div>
-            </div>
-            <div id="memberSection">
-                <div class="section-title">MEMBER CALVYN</div>
-                <div class="grid" id="memberGrid"></div>
+            <div id="rosterSections">
+                <div id="founderSection">
+                    <div class="section-title">FOUNDERS</div>
+                    <div class="grid" id="founderGrid"></div>
+                </div>
+                <div id="leaderSection">
+                    <div class="section-title">LEADERS</div>
+                    <div class="grid" id="leaderGrid"></div>
+                </div>
+                <div id="memberSection">
+                    <div class="section-title">MEMBER CALVYN</div>
+                    <div class="grid" id="memberGrid"></div>
+                </div>
             </div>
         </section>
     </div>
@@ -233,14 +209,14 @@
             </div>
             <img src="" id="fullArt" style="width:100%; border-radius:20px; margin-bottom:25px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
             <div style="text-align:center; margin-bottom:25px;">
-                <h2 id="fullTitle" style="font-family:'Orbitron'; font-size:1.1rem; margin:0; font-weight:900; letter-spacing: 1px;">STARBOY</h2>
+                <h2 id="fullTitle" style="font-family:'Orbitron'; font-size:1.1rem; margin:0; font-weight:900;">STARBOY</h2>
                 <p id="fullArtist" style="font-size:0.65rem; color:#888; margin:8px 0 0 0; letter-spacing:3px; font-weight: 700;">THE WEEKND</p>
             </div>
             <div style="width:100%; height:3px; background:#1a1a1a; margin-bottom:25px; cursor:pointer;" onclick="seek(event)">
                 <div id="progressLine" style="height:100%; background:var(--danger); width:0%; transition: width 0.3s;"></div>
             </div>
             <div style="display:flex; justify-content:center; margin-bottom:30px;">
-                <button onclick="togglePlay()" style="background:#fff; color:#000; width:65px; height:65px; border-radius:50%; border:none; cursor:pointer; transition: 0.3s;"><i class="fa-solid fa-play" id="playIcon" style="font-size: 1.5rem;"></i></button>
+                <button onclick="togglePlay()" style="background:#fff; color:#000; width:65px; height:65px; border-radius:50%; border:none; cursor:pointer;"><i class="fa-solid fa-play" id="playIcon" style="font-size: 1.5rem;"></i></button>
             </div>
             <input type="range" min="0" max="100" value="20" oninput="changeVolume(this.value)" style="width:100%; accent-color:var(--primary); cursor: pointer;">
         </div>
@@ -249,6 +225,7 @@
     <div id="yt-player" style="display:none;"></div>
 
     <script>
+        // ใส่ Firebase URL ของคุณที่นี่
         const firebaseConfig = { databaseURL: "https://calvyn-999ea-default-rtdb.asia-southeast1.firebasedatabase.app/" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -276,7 +253,6 @@
             });
         }
 
-        // YouTube API
         var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api";
         document.head.append(tag);
 
@@ -303,7 +279,7 @@
         function seek(e) { player.seekTo(player.getDuration() * (e.offsetX / e.currentTarget.offsetWidth)); }
         function updateProgress() { if (player && player.getCurrentTime) document.getElementById('progressLine').style.width = (player.getCurrentTime() / player.getDuration()) * 100 + "%"; }
 
-        // Sync Data
+        // --- Database Sync ---
         db.ref('settings').on('value', (snapshot) => {
             const s = snapshot.val() || {};
             document.getElementById('brand-name').innerText = s.brandName || "CALVYN";
