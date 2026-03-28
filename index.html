@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEMBER CALVYN</title>
+    <title>CALVYN</title>
+    
+    <link rel="icon" type="image/png" href="https://img1.pic.in.th/images/cgtlogo2.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Kanit:wght@200;400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Kanit:wght@200;400;600&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -13,13 +15,14 @@
     <style>
         :root {
             --primary: #f3d48b;
-            --bg-dark: #050505;
-            --card-bg: rgba(15, 15, 15, 0.85);
+            --bg-dark: #0a0a0b;
+            --card-bg: rgba(20, 20, 25, 0.7);
             --border-color: rgba(255, 255, 255, 0.1);
-            --online-green: #00ff88;
-            --danger: #ff0000;
-            --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --danger: #ff4757;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        * { box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
             background-color: var(--bg-dark);
@@ -27,375 +30,376 @@
             background-position: center;
             background-size: cover;
             color: #fff;
-            font-family: 'Rajdhani', sans-serif;
+            font-family: 'Rajdhani', 'Kanit', sans-serif;
             margin: 0; min-height: 100vh;
             overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* Jumpscare Video Overlay */
+        #video-jumpscare {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 999999;
+            display: none;
+            pointer-events: none;
+        }
+        #video-jumpscare iframe { width: 100%; height: 100%; border: none; }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shaking { animation: shake 0.1s infinite; }
+
+        nav { 
+            display: flex; justify-content: space-between; padding: 15px 5%; 
+            background: rgba(0,0,0,0.85); align-items: center; position: sticky; 
+            top: 0; z-index: 100; backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-color);
+        }
+        #brand-name { font-weight: 900; letter-spacing: 3px; font-family: 'Orbitron'; font-size: 1.4rem; color: var(--primary); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+
+        input, select { 
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); padding: 12px; 
+            color: #fff; border-radius: 8px; font-family: 'Kanit'; outline: none; width: 100%;
             transition: var(--transition);
         }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(243, 212, 139, 0.2); }
 
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.65); z-index: -1;
+        .btn-action { 
+            background: var(--primary); color: #000; border: none; padding: 12px 25px; 
+            border-radius: 8px; font-weight: 700; font-family: 'Orbitron'; cursor: pointer; 
+            transition: var(--transition); display: inline-flex; align-items: center; gap: 8px;
+            justify-content: center; width: 100%;
         }
+        .btn-action:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(243, 212, 139, 0.3); }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; width: auto; }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
-
-        /* --- Navbar --- */
-        nav { 
-            display: flex; justify-content: space-between; padding: 15px 40px; 
-            background: rgba(0,0,0,0.85); align-items: center; position: sticky; 
-            top: 0; z-index: 100; backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color);
-        }
-        #brand-name { font-weight: 900; letter-spacing: 5px; font-family: 'Orbitron'; font-size: 1.6rem; color: #fff; text-shadow: 0 0 15px rgba(243, 212, 139, 0.4); }
-        nav button { background: none; border: none; color: #666; cursor: pointer; font-size: 0.8rem; transition: var(--transition); font-family: 'Orbitron'; font-weight: 700; }
-        nav button.active { color: #fff; text-shadow: 0 0 15px var(--primary); }
-
-        /* --- Admin Login Section (White Theme) --- */
-        #adminLoginView .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 50px; border-radius: 30px; width: 100%; max-width: 380px; text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6); color: #111;
-            transform: translateY(20px); animation: loginShow 0.8s forwards;
-        }
-        @keyframes loginShow { to { opacity: 1; transform: translateY(0); } }
-        #adminLoginView h2 { font-family: 'Orbitron'; font-weight: 900; color: #111; margin-bottom: 30px; letter-spacing: 3px; }
-        #adminLoginView input { width: 100%; background: #f4f4f4; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; color: #000; border-radius: 12px; outline: none; transition: 0.3s; font-weight: 700; text-align: center; }
-        #adminLoginView input:focus { border-color: #111; background: #fff; }
-        #adminLoginView button { width: 100%; background: #111; color: #fff; padding: 18px; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; font-family: 'Orbitron'; letter-spacing: 2px; transition: 0.3s; }
-        #adminLoginView button:hover { background: var(--danger); transform: scale(1.02); }
-
-        /* --- Admin Wrapper --- */
-        #adminWrapper {
-            background: rgba(20, 10, 10, 0.95); border: 1px solid var(--primary); 
-            border-radius: 20px; margin-bottom: 40px; overflow: hidden;
-            transition: var(--transition); max-height: 2000px;
-            backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-        #adminWrapper.collapsed { max-height: 55px; border-color: #222; }
-        .admin-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 25px; cursor: pointer; background: rgba(243, 212, 139, 0.05);
-        }
-        .admin-content { padding: 30px; }
-        .admin-sub-title { font-family: 'Orbitron'; font-size: 0.75rem; color: var(--primary); margin-bottom: 20px; display: block; border-left: 5px solid var(--primary); padding-left: 10px; font-weight: 900; letter-spacing: 2px; }
-
-        /* --- Roster Headers (หนาและชัด) --- */
         .section-title { 
-            font-family: 'Orbitron'; font-size: 1.2rem; font-weight: 900; 
-            letter-spacing: 12px; color: #fff; margin: 70px 0 30px; 
-            display: flex; align-items: center; gap: 20px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            font-family: 'Orbitron'; font-size: 1.1rem; font-weight: 900; 
+            letter-spacing: 5px; color: #fff; margin: 50px 0 20px; 
+            display: flex; align-items: center; gap: 15px;
         }
-        .section-title::after { content: ""; height: 3px; flex-grow: 1; background: linear-gradient(to right, #444, transparent); }
+        .section-title::after { content: ""; height: 1px; flex-grow: 1; background: linear-gradient(90deg, var(--primary), transparent); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
-
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        
         .member-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 22px; display: flex; align-items: center; gap: 20px;
-            border-radius: 10px; position: relative; backdrop-filter: blur(15px); 
-            transition: var(--transition); opacity: 0; transform: translateY(20px);
-            cursor: pointer;
+            padding: 15px; display: flex; align-items: center; gap: 15px;
+            border-radius: 12px; position: relative; transition: var(--transition);
+            backdrop-filter: blur(5px);
         }
-        .member-card.show { opacity: 1; transform: translateY(0); }
-        .member-card:hover { border-color: var(--primary); background: rgba(35, 35, 35, 0.95); transform: translateY(-10px); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-
-        .avatar-box { width: 80px; height: 80px; background-size: cover; background-position: center; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); }
-        .member-card:hover .avatar-box { transform: scale(1.05); border-color: var(--primary); }
-        .status-pulse { position: absolute; bottom: 20px; left: 88px; width: 12px; height: 12px; background: var(--online-green); border-radius: 50%; box-shadow: 0 0 15px var(--online-green); border: 2px solid #000; }
         
-        .name { font-family: 'Orbitron'; font-size: 1.25rem; margin: 0; color: #fff; font-weight: 900; letter-spacing: 1px; }
-        .role-tag { font-family: 'Orbitron'; font-size: 0.65rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .role-founder { color: var(--primary); }
-        .role-leader { color: #e74c3c; }
-        .role-member { color: #aaa; }
+        .avatar-box { 
+            width: 65px; height: 65px; background-size: cover; 
+            background-position: center; border-radius: 50%; 
+            border: 2px solid var(--primary); flex-shrink: 0;
+        }
 
-        .fb-link { font-size: 0.75rem; color: #555; text-decoration: none; margin-top: 8px; display: inline-block; transition: 0.3s; font-family: 'Orbitron'; font-weight: 700; }
-        .fb-link:hover { color: #fff; letter-spacing: 1px; }
+        .role-tag { 
+            font-family: 'Orbitron'; font-size: 0.6rem; font-weight: 900; 
+            padding: 2px 8px; border-radius: 20px; background: var(--primary); color: #000;
+            margin-bottom: 5px; display: inline-block;
+        }
 
-        /* --- Player Smooth UI --- */
-        .bottom-ui { position: fixed; bottom: 30px; right: 30px; z-index: 1000; }
-        .music-mini-player { display: flex; align-items: center; background: rgba(15, 15, 15, 0.98); border: 1px solid var(--border-color); padding: 10px; width: 270px; cursor: pointer; border-radius: 15px; transition: var(--transition); box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .music-mini-player:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .full-player { position: fixed; bottom: 30px; right: 30px; width: 330px; background: rgba(8, 8, 8, 0.99); border: 1px solid var(--border-color); padding: 30px; display: none; flex-direction: column; border-radius: 25px; box-shadow: 0 30px 100px rgba(0,0,0,1); animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .admin-controls { display: flex; flex-direction: column; gap: 8px; padding-left: 10px; border-left: 1px solid var(--border-color); }
+        .ctrl-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; transition: var(--transition); color: #fff; }
+        .ctrl-btn:hover { color: var(--primary); }
+
+        .toast { 
+            position: fixed; top: 20px; right: 20px; background: var(--primary); 
+            color: #000; padding: 15px 25px; border-radius: 10px; font-weight: 900; 
+            z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
         .hidden { display: none !important; }
-        .toast { position: fixed; top: 100px; right: 20px; background: #fff; color: #000; padding: 18px 40px; border-radius: 15px; font-weight: 900; transform: translateX(150%); transition: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 9999; font-family: 'Orbitron'; font-size: 0.85rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .toast.show { transform: translateX(0); }
+
+        .key-display {
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px;
+            margin-top: 15px; font-family: monospace; color: var(--primary);
+            border: 1px dashed var(--primary); word-break: break-all;
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body id="mainBody">
+
+    <div id="video-jumpscare"></div>
 
     <nav>
-        <div id="brand-name">CALVYN</div>
-        <div style="display: flex; gap: 30px;">
-            <button onclick="showView('memberView')" id="navMembers" class="active">MEMBERS</button>
-            <button onclick="showView('adminLoginView')" id="navAdmin">ADMIN</button>
+        <div id="brand-name">ONELESS CGT</div>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="showView('memberView')" class="btn-action btn-secondary"><i class="fas fa-home"></i> HOME</button>
+            <button onclick="checkAdminStatus()" id="navAdmin" class="btn-action"><i class="fas fa-user-shield"></i> ADMIN</button>
         </div>
     </nav>
 
-    <div id="toast-container"></div>
-
     <div class="container">
-        <section id="adminLoginView" class="hidden" style="display: flex; align-items: center; justify-content: center; min-height: 70vh;">
-            <div class="login-card">
-                <h2>ADMIN LOGIN</h2>
-                <input type="text" id="loginUser" placeholder="OPERATOR ID">
-                <input type="password" id="loginPass" placeholder="PASSKEY">
-                <button onclick="handleLogin()">INITIALIZE SYSTEM</button>
+        <section id="adminLoginView" class="hidden fade-in" style="padding-top: 5vh;">
+            <div style="max-width: 400px; margin: auto; text-align: center;" class="glass-panel">
+                <i class="fas fa-key" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
+                <h2>ACCESS KEY</h2>
+                <input type="text" id="accessKeyInput" placeholder="ใส่ KEY เพื่อเข้าสู่ระบบ" style="margin-bottom: 20px; text-align: center;">
+                <button onclick="handleLoginByKey()" class="btn-action" style="margin-bottom: 25px;">เข้าสู่ระบบ</button>
+                
+                <hr style="opacity: 0.1; margin-bottom: 20px;">
+                <p style="font-size: 0.8rem; opacity: 0.6;">สร้าง KEY ใหม่ (ต้องใช้รหัสยืนยัน)</p>
+                <input type="password" id="genPass" placeholder="รหัสยืนยันแอดมิน" style="margin-bottom: 10px; text-align: center;">
+                <button onclick="generateNewKey()" class="btn-action btn-secondary" style="width: 100%; font-size: 0.8rem;">สร้าง ACCESS KEY</button>
+                <div id="newKeyResult" class="hidden key-display"></div>
             </div>
         </section>
 
-        <section id="memberView">
-            <div class="search-container" style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-                <div style="position: relative; width: 320px;">
-                    <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary);"></i>
-                    <input type="text" id="memberSearch" placeholder="SEARCH OPERATIVES..." onkeyup="filterMembers()" style="width:100%; background:rgba(255,255,255,0.03); border:none; border-bottom:3px solid var(--border-color); padding:12px 15px; color:#fff; font-family:'Rajdhani'; outline:none; font-weight: 700; transition: 0.3s;">
-                </div>
-            </div>
-
+        <section id="memberView" class="fade-in">
             <div id="adminPanel" class="hidden">
-                <div id="adminWrapper">
-                    <div class="admin-header" onclick="toggleAdminPanel()">
-                        <span style="color: var(--primary); font-family: 'Orbitron'; font-size: 0.85rem; letter-spacing: 3px; font-weight: 900;">
-                            <i class="fas fa-shield-alt mr-2"></i> COMMAND CENTER
-                        </span>
-                        <span id="collapseIcon" style="color: #444; font-family: 'Orbitron'; font-size: 0.7rem;">[ - ] HIDE PANEL</span>
+                <div class="glass-panel" style="border-left: 5px solid var(--primary);">
+                    <h3 style="color: var(--primary);"><i class="fas fa-tools"></i> ระบบจัดการ (Real-time)</h3>
+                    
+                    <div class="admin-grid" style="margin-bottom: 20px;">
+                        <div>
+                            <label>สีธีมหลัก</label>
+                            <input type="color" id="configColor" oninput="updateSetting('primary', this.value)">
+                        </div>
+                        <div>
+                            <label>รูปพื้นหลัง (URL)</label>
+                            <input type="text" id="configBG" placeholder="https://..." onchange="updateSetting('bg', this.value)">
+                        </div>
+                        <div>
+                            <label>หัวข้อ Founder</label>
+                            <input type="text" id="configHeadFounder" placeholder="FOUNDERS" oninput="updateSetting('headFounder', this.value)">
+                        </div>
+                        <div>
+                            <label>หัวข้อ Leader</label>
+                            <input type="text" id="configHeadLeader" placeholder="LEADERS" oninput="updateSetting('headLeader', this.value)">
+                        </div>
                     </div>
-                    <div class="admin-content admin-form">
-                        <span class="admin-sub-title">SYSTEM CONFIG</span>
-                        <div class="admin-grid">
-                            <input type="text" id="editBrand" placeholder="Web Brand Name">
-                            <select id="editFont">
-                                <option value="'Orbitron'">Font: Orbitron</option>
-                                <option value="'Kanit'">Font: Kanit</option>
-                                <option value="'Rajdhani'">Font: Rajdhani</option>
-                            </select>
-                            <input type="text" id="editBG" placeholder="Background URL">
-                        </div>
-                        <span class="admin-sub-title">MUSIC & COVER</span>
-                        <div class="admin-grid">
-                            <input type="text" id="editMusicTitle" placeholder="Song Name">
-                            <input type="text" id="editMusicArtist" placeholder="Artist">
-                            <input type="text" id="editMusicImg" placeholder="Cover Image URL">
-                            <input type="text" id="editMusicId" placeholder="YouTube Video ID">
-                        </div>
-                        <button class="btn-action" onclick="updateSettings()" style="width:100%; margin-bottom: 35px; background: #222; color: #fff;">SYNC GLOBAL SETTINGS</button>
-                        <span class="admin-sub-title">OPERATIVE MANAGER</span>
-                        <div class="admin-grid">
+
+                    <div class="glass-panel" style="background: rgba(0,0,0,0.2);">
+                        <h4 id="formTitle">จัดการสมาชิก</h4>
+                        <div class="admin-grid" style="margin-bottom: 15px;">
                             <input type="hidden" id="editMemberId">
-                            <input type="text" id="newName" placeholder="Full Name">
-                            <input type="text" id="newImg" placeholder="Profile Image URL">
-                            <input type="text" id="newFB" placeholder="Facebook Link">
+                            <input type="text" id="newName" placeholder="ชื่อ-นามสกุล">
+                            <input type="text" id="newImg" placeholder="URL รูปโปรไฟล์">
+                            <input type="text" id="newFB" placeholder="ลิงก์ Facebook">
                             <select id="newRole">
                                 <option value="founder">Founder</option>
                                 <option value="leader">Leader</option>
-                                <option value="member" selected>Member</option>
+                                <option value="member">Member</option>
                             </select>
                         </div>
-                        <div style="display:flex; gap:12px;">
-                            <button onclick="saveToDB()" id="addBtn" class="btn-action" style="flex:1;">ADD OPERATIVE</button>
-                            <button onclick="resetMemberForm()" id="cancelEditBtn" class="hidden" style="background: #333; color: #fff; border: none; padding: 0 25px; border-radius: 8px; cursor: pointer; font-family:'Orbitron'; font-size:0.7rem;">CANCEL</button>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="saveMember()" id="saveBtn" class="btn-action">บันทึกสมาชิก</button>
+                            <button onclick="resetForm()" class="btn-action btn-secondary">ล้างฟอร์ม</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="founderSection">
-                <div class="section-title">FOUNDERS</div>
-                <div class="grid" id="founderGrid"></div>
-            </div>
-            <div id="leaderSection">
-                <div class="section-title">LEADERS</div>
-                <div class="grid" id="leaderGrid"></div>
-            </div>
-            <div id="memberSection">
-                <div class="section-title">MEMBER CALVYN</div>
-                <div class="grid" id="memberGrid"></div>
+            <div id="rosterDisplay">
+                <div id="section-founder">
+                    <div class="section-title" id="titleFounder">FOUNDERS</div>
+                    <div class="grid" id="founderGrid"></div>
+                </div>
+                <div id="section-leader">
+                    <div class="section-title" id="titleLeader">LEADERS</div>
+                    <div class="grid" id="leaderGrid"></div>
+                </div>
+                <div id="section-member">
+                    <div class="section-title" id="titleMember">MEMBERS</div>
+                    <div class="grid" id="memberGrid"></div>
+                </div>
             </div>
         </section>
     </div>
 
-    <div class="bottom-ui">
-        <div class="music-mini-player" id="miniPlayer" onclick="togglePlayer()">
-            <img src="" class="mini-art" id="miniArt" style="width:50px; height:50px; border-radius:8px; object-fit:cover;">
-            <div style="flex:1; padding-left:15px; overflow:hidden;">
-                <span id="displayMiniTitle" style="font-family:'Orbitron'; font-size:0.65rem; color:#fff; display:block; font-weight:900;">STARBOY</span>
-                <span id="displayMiniArtist" style="font-size:0.55rem; color:#777; font-weight: 700;">THE WEEKND</span>
-            </div>
-            <i class="fa-solid fa-caret-up" style="color:#555; font-size: 0.8rem; margin: 0 10px;"></i>
-        </div>
-
-        <div class="full-player" id="fullPlayer">
-            <div style="display:flex; justify-content:space-between; font-size:0.6rem; color:#444; margin-bottom:20px; font-family:'Orbitron'; font-weight: 900;">
-                <span onclick="togglePlayer()" style="cursor:pointer;">[ DISMISS ]</span>
-                <span style="color:var(--danger);">[ LIVE SYNCING ]</span>
-            </div>
-            <img src="" id="fullArt" style="width:100%; border-radius:20px; margin-bottom:25px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
-            <div style="text-align:center; margin-bottom:25px;">
-                <h2 id="fullTitle" style="font-family:'Orbitron'; font-size:1.1rem; margin:0; font-weight:900; letter-spacing: 1px;">STARBOY</h2>
-                <p id="fullArtist" style="font-size:0.65rem; color:#888; margin:8px 0 0 0; letter-spacing:3px; font-weight: 700;">THE WEEKND</p>
-            </div>
-            <div style="width:100%; height:3px; background:#1a1a1a; margin-bottom:25px; cursor:pointer;" onclick="seek(event)">
-                <div id="progressLine" style="height:100%; background:var(--danger); width:0%; transition: width 0.3s;"></div>
-            </div>
-            <div style="display:flex; justify-content:center; margin-bottom:30px;">
-                <button onclick="togglePlay()" style="background:#fff; color:#000; width:65px; height:65px; border-radius:50%; border:none; cursor:pointer; transition: 0.3s;"><i class="fa-solid fa-play" id="playIcon" style="font-size: 1.5rem;"></i></button>
-            </div>
-            <input type="range" min="0" max="100" value="20" oninput="changeVolume(this.value)" style="width:100%; accent-color:var(--primary); cursor: pointer;">
-        </div>
-    </div>
-
-    <div id="yt-player" style="display:none;"></div>
-
     <script>
-        const firebaseConfig = { databaseURL: "https://calvyn-999ea-default-rtdb.asia-southeast1.firebasedatabase.app/" };
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            databaseURL: "https://changretta-e3be5-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let isAdmin = false, player, isPlaying = false;
+        let isAdmin = false;
 
-        function showToast(msg) {
-            const t = document.createElement('div'); t.className = 'toast'; t.innerText = msg;
-            document.getElementById('toast-container').appendChild(t);
-            setTimeout(() => t.classList.add('show'), 50);
-            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 600); }, 3000);
+        // --- Core Helpers ---
+        function showToast(m) {
+            const t = document.createElement('div'); t.className = 'toast fade-in';
+            t.innerHTML = m; document.body.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 3000);
         }
 
-        function toggleAdminPanel() {
-            const wrapper = document.getElementById('adminWrapper');
-            wrapper.classList.toggle('collapsed');
-            document.getElementById('collapseIcon').innerText = wrapper.classList.contains('collapsed') ? "[ + ] SHOW PANEL" : "[ - ] HIDE PANEL";
+        function triggerJumpscare() {
+            const container = document.getElementById('video-jumpscare');
+            container.innerHTML = `<iframe src="https://www.youtube.com/embed/u8UdAAX_n28?autoplay=1&controls=0&start=13&mute=0" allow="autoplay"></iframe>`;
+            container.style.display = 'block';
+            document.body.classList.add('shaking');
+            setTimeout(() => {
+                container.style.display = 'none';
+                container.innerHTML = '';
+                document.body.classList.remove('shaking');
+            }, 4000);
         }
 
-        function filterMembers() {
-            const val = document.getElementById('memberSearch').value.toLowerCase();
-            document.querySelectorAll('.member-card').forEach(card => {
-                const name = card.querySelector('.name').innerText.toLowerCase();
-                card.style.display = name.includes(val) ? 'flex' : 'none';
+        function showView(v) {
+            document.getElementById('memberView').classList.toggle('hidden', v !== 'memberView');
+            document.getElementById('adminLoginView').classList.toggle('hidden', v !== 'adminLoginView');
+        }
+
+        // --- Admin Key & Login Logic ---
+        function generateNewKey() {
+            const pass = document.getElementById('genPass').value;
+            // เปลี่ยนรหัสยืนยันเป็น calvyn0808 ตามที่สั่ง
+            if(pass === "calvyn0808") { 
+                const newKey = 'CGT-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                db.ref('validKeys/' + newKey).set(true);
+                const res = document.getElementById('newKeyResult');
+                res.innerHTML = `คัดลอก KEY นี้ไว้ล็อกอิน:<br><strong>${newKey}</strong>`;
+                res.classList.remove('hidden');
+                document.getElementById('genPass').value = "";
+                showToast("สร้าง ACCESS KEY สำเร็จ");
+            } else {
+                triggerJumpscare();
+            }
+        }
+
+        function handleLoginByKey() {
+            const key = document.getElementById('accessKeyInput').value.trim();
+            if(!key) return showToast("กรุณาใส่ KEY");
+
+            db.ref('validKeys/' + key).once('value', snap => {
+                if(snap.exists()) {
+                    isAdmin = true;
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                    document.getElementById('navAdmin').innerHTML = '<i class="fas fa-sign-out-alt"></i> LOGOUT';
+                    showView('memberView');
+                    showToast("เข้าสู่ระบบแอดมินสำเร็จ");
+                    renderRoster();
+                } else {
+                    triggerJumpscare();
+                }
             });
         }
 
-        // YouTube API
-        var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api";
-        document.head.append(tag);
+        function checkAdminStatus() { 
+            isAdmin ? location.reload() : showView('adminLoginView');
+        }
 
-        function onYouTubeIframeAPIReady() {
-            db.ref('settings').once('value', s => {
-                const config = s.val() || {};
-                const vidId = config.musicUrl || 'XXYlFuWEuKI';
-                player = new YT.Player('yt-player', {
-                    videoId: vidId, playerVars: { 'autoplay': 1, 'playlist': vidId },
-                    events: {
-                        'onReady': (e) => { e.target.setVolume(20); setInterval(updateProgress, 500); },
-                        'onStateChange': (e) => {
-                            isPlaying = (e.data == YT.PlayerState.PLAYING);
-                            document.getElementById('playIcon').className = isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
-                        }
-                    }
+        // --- Settings Real-time Sync ---
+        function updateSetting(key, value) {
+            if(!isAdmin) return;
+            db.ref('settings/' + key).set(value);
+        }
+
+        db.ref('settings').on('value', snap => {
+            const s = snap.val() || {};
+            if(s.primary) {
+                document.documentElement.style.setProperty('--primary', s.primary);
+                document.getElementById('configColor').value = s.primary;
+            }
+            if(s.bg) {
+                document.body.style.backgroundImage = `url('${s.bg}')`;
+                document.getElementById('configBG').value = s.bg;
+            }
+            document.getElementById('titleFounder').innerText = s.headFounder || "FOUNDERS";
+            document.getElementById('configHeadFounder').value = s.headFounder || "";
+            document.getElementById('titleLeader').innerText = s.headLeader || "LEADERS";
+            document.getElementById('configHeadLeader').value = s.headLeader || "";
+        });
+
+        // --- Roster Real-time Sync ---
+        function renderRoster() {
+            db.ref('roster').on('value', snap => {
+                const grids = { founder: 'founderGrid', leader: 'leaderGrid', member: 'memberGrid' };
+                Object.values(grids).forEach(id => document.getElementById(id).innerHTML = "");
+                const data = snap.val();
+                if(!data) return;
+
+                Object.keys(data).forEach(id => {
+                    const item = data[id];
+                    const card = document.createElement('div');
+                    card.className = 'member-card fade-in';
+                    card.innerHTML = `
+                        <div class="avatar-box" style="background-image: url('${item.img || 'https://img1.pic.in.th/images/cgtlogo2.png'}')"></div>
+                        <div style="flex:1">
+                            <span class="role-tag">${item.role.toUpperCase()}</span>
+                            <div style="font-weight:700; font-family:'Orbitron'; font-size:1.1rem;">${item.name}</div>
+                            <a href="${item.fb}" target="_blank" style="font-size:0.75rem; color:var(--primary);">FACEBOOK</a>
+                        </div>
+                        ${isAdmin ? `
+                        <div class="admin-controls">
+                            <button class="ctrl-btn" onclick="prepareEdit('${id}', '${item.name}', '${item.img}', '${item.fb}', '${item.role}')"><i class="fas fa-edit"></i></button>
+                            <button class="ctrl-btn" onclick="deleteMember('${id}')"><i class="fas fa-trash-alt"></i></button>
+                        </div>` : ''}
+                    `;
+                    if(grids[item.role]) document.getElementById(grids[item.role]).appendChild(card);
                 });
             });
         }
 
-        function togglePlayer() { const f = document.getElementById('fullPlayer'); f.style.display = f.style.display === "flex" ? "none" : "flex"; }
-        function togglePlay() { isPlaying ? player.pauseVideo() : player.playVideo(); }
-        function changeVolume(v) { if(player) player.setVolume(v); }
-        function seek(e) { player.seekTo(player.getDuration() * (e.offsetX / e.currentTarget.offsetWidth)); }
-        function updateProgress() { if (player && player.getCurrentTime) document.getElementById('progressLine').style.width = (player.getCurrentTime() / player.getDuration()) * 100 + "%"; }
+        // Initial render
+        renderRoster();
 
-        // Sync Data
-        db.ref('settings').on('value', (snapshot) => {
-            const s = snapshot.val() || {};
-            document.getElementById('brand-name').innerText = s.brandName || "CALVYN";
-            document.getElementById('brand-name').style.fontFamily = s.fontFamily || "'Orbitron'";
-            document.body.style.backgroundImage = s.bgUrl ? `url('${s.bgUrl}')` : "url('https://img1.pic.in.th/images/calvyn.png')";
-            
-            const mTitle = s.musicTitle || "STARBOY", mArtist = s.musicArtist || "THE WEEKND", mImg = s.musicImg || `https://i.ytimg.com/vi/${s.musicUrl}/maxresdefault.jpg`;
-            document.getElementById('displayMiniTitle').innerText = mTitle;
-            document.getElementById('displayMiniArtist').innerText = mArtist;
-            document.getElementById('miniArt').src = mImg; document.getElementById('fullArt').src = mImg;
-            document.getElementById('fullTitle').innerText = mTitle; document.getElementById('fullArtist').innerText = mArtist;
+        // --- Member Management ---
+        function saveMember() {
+            if(!isAdmin) return showToast("สิทธิ์ไม่ถูกต้อง");
+            const id = document.getElementById('editMemberId').value;
+            const memberData = {
+                name: document.getElementById('newName').value,
+                img: document.getElementById('newImg').value,
+                fb: document.getElementById('newFB').value,
+                role: document.getElementById('newRole').value
+            };
+            if(!memberData.name) return showToast("กรุณากรอกชื่อ");
 
-            if(s.musicUrl && player && player.loadVideoById && player.getVideoData() && player.getVideoData().video_id !== s.musicUrl) player.loadVideoById(s.musicUrl);
-        });
-
-        db.ref('roster').on('value', (snapshot) => {
-            const grids = { founder: document.getElementById('founderGrid'), leader: document.getElementById('leaderGrid'), member: document.getElementById('memberGrid') };
-            Object.values(grids).forEach(g => g.innerHTML = "");
-            const data = snapshot.val(); if (!data) return;
-            Object.keys(data).forEach((id, index) => {
-                const item = data[id];
-                const card = document.createElement('div');
-                card.className = 'member-card'; card.onclick = () => { if(isAdmin) prepareEditMember(id, item); };
-                card.innerHTML = `
-                    <div class="avatar-box" style="background-image: url('${item.img || ''}')"></div>
-                    <div class="status-pulse"></div>
-                    <div class="info">
-                        <span class="role-tag role-${item.role}">${item.role.toUpperCase()}</span>
-                        <h4 class="name">${item.name}</h4>
-                        <a href="${item.fb}" target="_blank" class="fb-link">VIEW FACEBOOK</a>
-                    </div>
-                    ${isAdmin ? `<button class="delete-btn" style="position: absolute; top: 15px; right: 15px; color: var(--danger); background:none; border:none; cursor:pointer;" onclick="event.stopPropagation(); deleteItem('${id}')"><i class="fas fa-trash-alt"></i></button>` : ''}
-                `;
-                if(grids[item.role]) { grids[item.role].appendChild(card); setTimeout(() => card.classList.add('show'), index * 80); }
-            });
-        });
-
-        function updateSettings() {
-            db.ref('settings').update({
-                brandName: document.getElementById('editBrand').value || "CALVYN",
-                fontFamily: document.getElementById('editFont').value,
-                bgUrl: document.getElementById('editBG').value,
-                musicUrl: document.getElementById('editMusicId').value || "XXYlFuWEuKI",
-                musicTitle: document.getElementById('editMusicTitle').value || "STARBOY",
-                musicArtist: document.getElementById('editMusicArtist').value || "THE WEEKND",
-                musicImg: document.getElementById('editMusicImg').value
-            });
-            showToast("CORE SYSTEM SYNCED");
+            if(id) db.ref('roster/' + id).update(memberData).then(() => showToast("อัปเดตข้อมูลสำเร็จ"));
+            else db.ref('roster').push(memberData).then(() => showToast("เพิ่มสมาชิกใหม่แล้ว"));
+            resetForm();
         }
 
-        function prepareEditMember(id, data) {
+        function prepareEdit(id, name, img, fb, role) {
             document.getElementById('editMemberId').value = id;
-            document.getElementById('newName').value = data.name;
-            document.getElementById('newImg').value = data.img;
-            document.getElementById('newFB').value = data.fb;
-            document.getElementById('newRole').value = data.role;
-            document.getElementById('addBtn').innerText = "UPDATE OPERATIVE";
-            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            document.getElementById('newName').value = name;
+            document.getElementById('newImg').value = img;
+            document.getElementById('newFB').value = fb;
+            document.getElementById('newRole').value = role;
+            document.getElementById('saveBtn').innerText = "อัปเดตสมาชิก";
+            document.getElementById('formTitle').innerText = "แก้ไขข้อมูลสมาชิก";
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function resetMemberForm() {
+        function deleteMember(id) {
+            if(confirm("ยืนยันการลบสมาชิกนี้?")) db.ref('roster/' + id).remove().then(() => showToast("ลบข้อมูลแล้ว"));
+        }
+
+        function resetForm() {
             document.getElementById('editMemberId').value = "";
-            ['newName','newImg','newFB'].forEach(id => document.getElementById(id).value = "");
-            document.getElementById('addBtn').innerText = "ADD OPERATIVE";
-            document.getElementById('cancelEditBtn').classList.add('hidden');
+            document.getElementById('newName').value = "";
+            document.getElementById('newImg').value = "";
+            document.getElementById('newFB').value = "";
+            document.getElementById('saveBtn').innerText = "บันทึกสมาชิก";
+            document.getElementById('formTitle').innerText = "จัดการสมาชิก";
         }
-
-        function saveToDB() {
-            const id = document.getElementById('editMemberId').value, name = document.getElementById('newName').value;
-            const data = { name, img: document.getElementById('newImg').value, fb: document.getElementById('newFB').value, role: document.getElementById('newRole').value };
-            if (name) {
-                if(id) db.ref('roster/' + id).update(data); else db.ref('roster').push(data);
-                showToast(id ? "OPERATIVE UPDATED" : "OPERATIVE REGISTERED"); resetMemberForm();
-            }
-        }
-
-        function showView(view) {
-            document.getElementById('memberView').classList.toggle('hidden', view !== 'memberView');
-            document.getElementById('adminLoginView').classList.toggle('hidden', view !== 'adminLoginView');
-            document.getElementById('navMembers').classList.toggle('active', view === 'memberView');
-            document.getElementById('navAdmin').classList.toggle('active', view === 'adminLoginView');
-        }
-
-        function handleLogin() {
-            if (document.getElementById('loginUser').value === "calvyn" && document.getElementById('loginPass').value === "0808") {
-                isAdmin = true; document.getElementById('adminPanel').classList.remove('hidden'); showView('memberView'); showToast("ACCESS GRANTED");
-            } else showToast("INVALID PASSKEY");
-        }
-
-        function deleteItem(id) { if (confirm("TERMINATE OPERATIVE?")) db.ref('roster/' + id).remove(); }
-        document.addEventListener('click', () => { if(player && !isPlaying) player.playVideo(); }, { once: true });
     </script>
 </body>
 </html>
