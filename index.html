@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CALVYN</title>
+    <title>CHANGRETTA[LESS] - ADMIN PANEL</title>
     
     <link rel="icon" type="image/png" href="https://img1.pic.in.th/images/cgtlogo2.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -233,7 +233,7 @@
     </div>
 
     <script>
-        // --- Firebase Configuration ---
+        // --- ระบบ REALTIME เชื่อมต่อกับ Firebase ตัวเดิมของคุณ ---
         const firebaseConfig = {
             databaseURL: "https://changretta-e3be5-default-rtdb.asia-southeast1.firebasedatabase.app/"
         };
@@ -242,7 +242,6 @@
 
         let isAdmin = false;
 
-        // --- Core Helpers ---
         function showToast(m) {
             const t = document.createElement('div'); t.className = 'toast fade-in';
             t.innerHTML = m; document.body.appendChild(t);
@@ -254,6 +253,7 @@
             container.innerHTML = `<iframe src="https://www.youtube.com/embed/u8UdAAX_n28?autoplay=1&controls=0&start=13&mute=0" allow="autoplay"></iframe>`;
             container.style.display = 'block';
             document.body.classList.add('shaking');
+
             setTimeout(() => {
                 container.style.display = 'none';
                 container.innerHTML = '';
@@ -266,15 +266,15 @@
             document.getElementById('adminLoginView').classList.toggle('hidden', v !== 'adminLoginView');
         }
 
-        // --- Admin Key & Login Logic ---
+        // --- KEY SYSTEM ---
         function generateNewKey() {
             const pass = document.getElementById('genPass').value;
-            // เปลี่ยนรหัสยืนยันเป็น calvyn0808 ตามที่สั่ง
+            // รหัสผ่านยืนยันเป็น calvyn0808 ตามที่คุณต้องการ
             if(pass === "calvyn0808") { 
                 const newKey = 'CGT-' + Math.random().toString(36).substr(2, 9).toUpperCase();
                 db.ref('validKeys/' + newKey).set(true);
                 const res = document.getElementById('newKeyResult');
-                res.innerHTML = `คัดลอก KEY นี้ไว้ล็อกอิน:<br><strong>${newKey}</strong>`;
+                res.innerHTML = `คัดลอก KEY นี้:<br><strong>${newKey}</strong>`;
                 res.classList.remove('hidden');
                 document.getElementById('genPass').value = "";
                 showToast("สร้าง ACCESS KEY สำเร็จ");
@@ -294,7 +294,7 @@
                     document.getElementById('navAdmin').innerHTML = '<i class="fas fa-sign-out-alt"></i> LOGOUT';
                     showView('memberView');
                     showToast("เข้าสู่ระบบแอดมินสำเร็จ");
-                    renderRoster();
+                    renderRoster(); 
                 } else {
                     triggerJumpscare();
                 }
@@ -302,10 +302,14 @@
         }
 
         function checkAdminStatus() { 
-            isAdmin ? location.reload() : showView('adminLoginView');
+            if(isAdmin) {
+                location.reload(); 
+            } else {
+                showView('adminLoginView');
+            }
         }
 
-        // --- Settings Real-time Sync ---
+        // --- REALTIME SYNC (SETTINGS & ROSTER) ---
         function updateSetting(key, value) {
             if(!isAdmin) return;
             db.ref('settings/' + key).set(value);
@@ -327,11 +331,11 @@
             document.getElementById('configHeadLeader').value = s.headLeader || "";
         });
 
-        // --- Roster Real-time Sync ---
         function renderRoster() {
             db.ref('roster').on('value', snap => {
                 const grids = { founder: 'founderGrid', leader: 'leaderGrid', member: 'memberGrid' };
                 Object.values(grids).forEach(id => document.getElementById(id).innerHTML = "");
+                
                 const data = snap.val();
                 if(!data) return;
 
@@ -357,10 +361,9 @@
             });
         }
 
-        // Initial render
         renderRoster();
 
-        // --- Member Management ---
+        // --- ADMIN FUNCTIONS ---
         function saveMember() {
             if(!isAdmin) return showToast("สิทธิ์ไม่ถูกต้อง");
             const id = document.getElementById('editMemberId').value;
@@ -370,10 +373,14 @@
                 fb: document.getElementById('newFB').value,
                 role: document.getElementById('newRole').value
             };
+            
             if(!memberData.name) return showToast("กรุณากรอกชื่อ");
 
-            if(id) db.ref('roster/' + id).update(memberData).then(() => showToast("อัปเดตข้อมูลสำเร็จ"));
-            else db.ref('roster').push(memberData).then(() => showToast("เพิ่มสมาชิกใหม่แล้ว"));
+            if(id) {
+                db.ref('roster/' + id).update(memberData).then(() => showToast("อัปเดตข้อมูลสำเร็จ"));
+            } else {
+                db.ref('roster').push(memberData).then(() => showToast("เพิ่มสมาชิกใหม่แล้ว"));
+            }
             resetForm();
         }
 
@@ -389,7 +396,9 @@
         }
 
         function deleteMember(id) {
-            if(confirm("ยืนยันการลบสมาชิกนี้?")) db.ref('roster/' + id).remove().then(() => showToast("ลบข้อมูลแล้ว"));
+            if(confirm("ยืนยันการลบสมาชิกนี้?")) {
+                db.ref('roster/' + id).remove().then(() => showToast("ลบข้อมูลแล้ว"));
+            }
         }
 
         function resetForm() {
