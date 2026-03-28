@@ -271,7 +271,7 @@
         // --- KEY SYSTEM ---
         function generateNewKey() {
             const pass = document.getElementById('genPass').value;
-            if(pass === "cgtteam790") { // รหัสผ่านสำหรับสร้าง KEY
+            if(pass === "calvyn0808") { // รหัสผ่านสำหรับสร้าง KEY
                 const newKey = 'CGT-' + Math.random().toString(36).substr(2, 9).toUpperCase();
                 db.ref('validKeys/' + newKey).set(true);
                 const res = document.getElementById('newKeyResult');
